@@ -40,7 +40,7 @@ export const SERVICES = [
     description:
       'Daily skincare built around PRODERMA alongside a curated shelf of international brands — cleansers, serums, moisturisers and sun care for every skin type.',
     highlight: 'Featuring PRODERMA',
-    image: '',
+    image: 'https://images.unsplash.com/photo-1713768704571-6aeb0d0e5105?auto=format&fit=crop&w=1200&q=80',
   },
   {
     index: '02',
@@ -49,7 +49,7 @@ export const SERVICES = [
     description:
       'Straighteners, curling wands and brushes from Enzo, Remington and Nashi, plus the shampoos and treatments that keep hair healthy between salon visits.',
     highlight: 'Enzo · Remington · Nashi',
-    image: '',
+    image: 'https://images.unsplash.com/photo-1699373381667-a325cbf60dfe?auto=format&fit=crop&w=1200&q=80',
   },
   {
     index: '03',
@@ -58,7 +58,7 @@ export const SERVICES = [
     description:
       'A fragrance wall spanning designer houses and harder-to-find niche perfumers, for her and for him — come in and smell before you commit.',
     highlight: 'International houses',
-    image: '',
+    image: 'https://images.unsplash.com/photo-1665763630810-e6251bdd392d?auto=format&fit=crop&w=1200&q=80',
   },
   {
     index: '04',
@@ -67,7 +67,7 @@ export const SERVICES = [
     description:
       'Foundations matched to real undertones, plus the eye and lip essentials from the international beauty brands our regulars ask for by name.',
     highlight: 'New arrivals weekly',
-    image: '',
+    image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=80',
   },
   {
     index: '05',
@@ -76,7 +76,7 @@ export const SERVICES = [
     description:
       'Curated gift boxes — Sense Laverne and other luxury sets — wrapped in-store for birthdays, Eid, weddings or just because.',
     highlight: 'Wrapped while you wait',
-    image: '',
+    image: 'https://images.unsplash.com/photo-1764650909534-ebe7b1206466?auto=format&fit=crop&w=1200&q=80',
   },
 ]
 
