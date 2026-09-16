@@ -1,4 +1,14 @@
-export default function ImagePlaceholder({ className = '' }) {
+export default function ImagePlaceholder({ className = '', src, alt = '' }) {
+    if (src) {
+        return (
+            <img
+                src={src}
+                alt={alt}
+                className={`h-full w-full object-cover ${className}`}
+            />
+        )
+    }
+
     return (
         <div className={`flex items-center justify-center bg-peach ${className}`}>
             <svg
