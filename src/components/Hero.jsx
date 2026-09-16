@@ -43,7 +43,7 @@ export default function Hero() {
         <p className="font-sans text-sm uppercase tracking-wideish text-ink/60">{TAGLINE}</p>
 
         <h1 className="mt-4 max-w-4xl font-display font-extrabold uppercase text-display-xl text-ink">
-          Cosmetics, chosen well
+          La beauté, notre nature
         </h1>
 
         <p className="mt-6 max-w-md font-sans text-lg text-ink/70">

@@ -40,7 +40,7 @@ export const SERVICES = [
     description:
       'Daily skincare built around PRODERMA alongside a curated shelf of international brands — cleansers, serums, moisturisers and sun care for every skin type.',
     highlight: 'Featuring PRODERMA',
-    image: 'nails',
+    image: '',
   },
   {
     index: '02',
@@ -49,7 +49,7 @@ export const SERVICES = [
     description:
       'Straighteners, curling wands and brushes from Enzo, Remington and Nashi, plus the shampoos and treatments that keep hair healthy between salon visits.',
     highlight: 'Enzo · Remington · Nashi',
-    image: 'facial',
+    image: '',
   },
   {
     index: '03',
@@ -58,7 +58,7 @@ export const SERVICES = [
     description:
       'A fragrance wall spanning designer houses and harder-to-find niche perfumers, for her and for him — come in and smell before you commit.',
     highlight: 'International houses',
-    image: 'brows',
+    image: '',
   },
   {
     index: '04',
@@ -67,7 +67,7 @@ export const SERVICES = [
     description:
       'Foundations matched to real undertones, plus the eye and lip essentials from the international beauty brands our regulars ask for by name.',
     highlight: 'New arrivals weekly',
-    image: 'makeup',
+    image: '',
   },
   {
     index: '05',
@@ -76,19 +76,19 @@ export const SERVICES = [
     description:
       'Curated gift boxes — Sense Laverne and other luxury sets — wrapped in-store for birthdays, Eid, weddings or just because.',
     highlight: 'Wrapped while you wait',
-    image: 'tan',
+    image: '',
   },
 ]
 
 export const GALLERY = [
-  { id: 1, label: 'Gift box, ready to wrap', tag: 'Gift Sets' },
-  { id: 2, label: 'PRODERMA skincare edit', tag: 'Skincare' },
-  { id: 3, label: 'Enzo styling tools in-store', tag: 'Haircare' },
-  { id: 4, label: 'Fragrance wall', tag: 'Parfumerie' },
-  { id: 5, label: 'Sense Laverne gift box', tag: 'Gift Sets' },
-  { id: 6, label: 'New season makeup', tag: 'Makeup' },
-  { id: 7, label: 'Haircare & tools shelf', tag: 'Haircare' },
-  { id: 8, label: 'Sun care essentials', tag: 'Skincare' },
+  { id: 1, label: 'Gift box, ready to wrap', tag: 'Gift Sets', price: '2 400 DA', description: 'A curated gift box, wrapped and ready to give.' },
+  { id: 2, label: 'PRODERMA skincare edit', tag: 'Skincare', price: '3 200 DA', description: 'Our PRODERMA picks, chosen for real results.' },
+  { id: 3, label: 'Enzo styling tools in-store', tag: 'Haircare', price: '4 500 DA', description: 'Professional styling tools from Enzo, tested in-store.' },
+  { id: 4, label: 'Fragrance wall', tag: 'Parfumerie', price: '3 800 DA', description: 'Designer and niche fragrances, for her and for him.' },
+  { id: 5, label: 'Sense Laverne gift box', tag: 'Gift Sets', price: '2 900 DA', description: 'A luxury Sense Laverne set, wrapped while you wait.' },
+  { id: 6, label: 'New season makeup', tag: 'Makeup', price: '1 800 DA', description: 'This season\'s makeup arrivals, matched to real undertones.' },
+  { id: 7, label: 'Haircare & tools shelf', tag: 'Haircare', price: '2 100 DA', description: 'Everyday haircare to keep hair healthy between visits.' },
+  { id: 8, label: 'Sun care essentials', tag: 'Skincare', price: '1 500 DA', description: 'SPF and sun care essentials for every skin type.' },
 ]
 
 export const STORY = {

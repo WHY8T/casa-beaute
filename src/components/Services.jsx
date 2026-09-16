@@ -1,11 +1,16 @@
 import { motion } from 'framer-motion'
-import GlassOrb from './GlassOrb'
+import ImagePlaceholder from './ImagePlaceholder'
 import SectionWipe from './SectionWipe'
 import { SERVICES } from '../lib/content'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+}
+
+const imageReveal = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
 }
 
 export default function Services() {
@@ -30,9 +35,21 @@ export default function Services() {
             <SectionWipe from={i === 0 ? 'cream' : tinted ? 'cream' : 'peach'} to={tinted ? 'peach' : 'cream'} />
             <div className={`px-6 py-20 sm:px-10 lg:px-16 ${tinted ? 'bg-peach' : 'bg-cream'}`}>
               <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
-                <div className={`flex justify-center ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
-                  <GlassOrb size={220} />
-                </div>
+                <motion.div
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.4 }}
+                  variants={imageReveal}
+                  className={`flex justify-center ${i % 2 === 1 ? 'lg:order-2' : ''}`}
+                >
+                  <div className="relative h-[320px] w-full max-w-sm overflow-hidden rounded-3xl shadow-sm sm:h-[380px]">
+                    <ImagePlaceholder
+                      src={s.image}
+                      alt={s.name}
+                      className="absolute inset-0 transition-transform duration-700 hover:scale-105"
+                    />
+                  </div>
+                </motion.div>
 
                 <motion.div
                   initial="hidden"
