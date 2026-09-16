@@ -27,9 +27,9 @@ export default function Hero() {
         muted
         loop
         playsInline
-        poster="/hero-poster.jpg"
+        poster={`${import.meta.env.BASE_URL}hero-poster.jpg`}
       >
-        <source src="/hero.mp4" type="video/mp4" />
+        <source src={`${import.meta.env.BASE_URL}hero.mp4`} type="video/mp4" />
       </video>
 
       {/* Light wash for text legibility — keeps the hero bright, no dark scrim */}
