@@ -3,14 +3,25 @@ import ImagePlaceholder from './ImagePlaceholder'
 import SectionWipe from './SectionWipe'
 import { SERVICES } from '../lib/content'
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+const textContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
+}
+
+const textItem = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 }
 
 const imageReveal = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
+  hidden: (dir) => ({ opacity: 0, scale: 0.85, x: dir, filter: 'blur(12px)' }),
+  visible: {
+    opacity: 1,
+    scale: 1,
+    x: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 1, ease: [0.16, 1, 0.3, 1] },
+  },
 }
 
 export default function Services() {
@@ -39,7 +50,9 @@ export default function Services() {
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.4 }}
+                  custom={i % 2 === 1 ? 60 : -60}
                   variants={imageReveal}
+                  whileHover={{ scale: 1.02 }}
                   className={`flex justify-center ${i % 2 === 1 ? 'lg:order-2' : ''}`}
                 >
                   <div className="relative h-[320px] w-full max-w-sm overflow-hidden rounded-3xl shadow-sm sm:h-[380px]">
@@ -55,16 +68,27 @@ export default function Services() {
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.5 }}
-                  variants={fadeUp}
+                  variants={textContainer}
                   className={i % 2 === 1 ? 'lg:order-1' : ''}
                 >
-                  <p className="font-display font-extrabold text-4xl text-rose-deep">{s.index}/</p>
-                  <h3 className="mt-2 font-display font-extrabold uppercase text-3xl text-ink sm:text-4xl">
+                  <motion.p variants={textItem} className="font-display font-extrabold text-4xl text-rose-deep">
+                    {s.index}/
+                  </motion.p>
+                  <motion.h3
+                    variants={textItem}
+                    className="mt-2 font-display font-extrabold uppercase text-3xl text-ink sm:text-4xl"
+                  >
                     {s.name}
-                  </h3>
-                  <p className="mt-1 font-sans text-sm uppercase tracking-wideish text-ink/50">{s.tagline}</p>
-                  <p className="mt-5 max-w-md font-sans text-ink/70">{s.description}</p>
-                  <p className="mt-5 font-sans text-sm text-ink">{s.highlight}</p>
+                  </motion.h3>
+                  <motion.p variants={textItem} className="mt-1 font-sans text-sm uppercase tracking-wideish text-ink/50">
+                    {s.tagline}
+                  </motion.p>
+                  <motion.p variants={textItem} className="mt-5 max-w-md font-sans text-ink/70">
+                    {s.description}
+                  </motion.p>
+                  <motion.p variants={textItem} className="mt-5 font-sans text-sm text-ink">
+                    {s.highlight}
+                  </motion.p>
                 </motion.div>
               </div>
             </div>

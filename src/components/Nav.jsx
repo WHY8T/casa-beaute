@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NAV_LINKS, SALON_NAME } from '../lib/content'
+import { LOGO_URL, NAV_LINKS, SALON_NAME } from '../lib/content'
 
 export default function Nav() {
   const [open, setOpen] = useState(false)
@@ -26,9 +26,18 @@ export default function Nav() {
 
         <a
           href="#top"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-display font-extrabold text-lg uppercase tracking-wideish text-rose-deep sm:text-xl"
+          className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2"
         >
-          {SALON_NAME}
+          {LOGO_URL ? (
+            <img src={LOGO_URL} alt={SALON_NAME} className="h-8 w-8 object-contain sm:h-9 sm:w-9" />
+          ) : (
+            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-rose-deep font-display text-xs font-extrabold text-rose-deep sm:h-9 sm:w-9">
+              CB
+            </span>
+          )}
+          <span className="font-display font-extrabold text-lg uppercase tracking-wideish text-rose-deep sm:text-xl">
+            {SALON_NAME}
+          </span>
         </a>
 
         <div className="ml-auto flex items-center gap-6 md:ml-0">
@@ -45,8 +54,8 @@ export default function Nav() {
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
           >
-            <spanbg-rose-deep transition-transform duration-300
-              className={`h-px w-6  ${open ? 'translate-y-[3.5px] rotate-45' : ''}`}
+            <span
+              className={`h-px w-6 bg-rose-deep transition-transform duration-300 ${open ? 'translate-y-[3.5px] rotate-45' : ''}`}
             />
             <span
               className={`h-px w-6 bg-rose-deep transition-transform duration-300 ${open ? '-translate-y-[3.5px] -rotate-45' : ''}`}
