@@ -1,14 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ImagePlaceholder from './ImagePlaceholder'
-import { GALLERY, SALON_NAME } from '../lib/content'
+import useProducts from '../hooks/useProducts'
+import { SALON_NAME, WHATSAPP_NUMBER } from '../lib/content'
 
-/**
- * Full-screen "enter the store" overlay: a searchable grid of the
- * boutique's products. Reuses the GALLERY placeholder items as the
- * catalog — add more entries to GALLERY in content.js to expand it.
- */
 export default function StoreModal({ isOpen, onClose }) {
+    const { products, loading } = useProducts()
     const [query, setQuery] = useState('')
     const [selected, setSelected] = useState(null)
 
@@ -35,11 +32,16 @@ export default function StoreModal({ isOpen, onClose }) {
 
     const results = useMemo(() => {
         const q = query.trim().toLowerCase()
-        if (!q) return GALLERY
-        return GALLERY.filter(
+        if (!q) return products
+        return products.filter(
             (item) => item.label.toLowerCase().includes(q) || item.tag.toLowerCase().includes(q)
         )
-    }, [query])
+    }, [query, products])
+
+    const whatsappLink = (product) => {
+        const message = `Hi! I'm interested in "${product.label}"${product.price ? ` (${product.price})` : ''}.`
+        return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
+    }
 
     return (
         <AnimatePresence>
@@ -93,27 +95,40 @@ export default function StoreModal({ isOpen, onClose }) {
                     </div>
 
                     <div className="flex-1 overflow-y-auto px-6 py-10 sm:px-10 lg:px-16">
-                        {results.length === 0 ? (
+                        {loading && <p className="mt-20 text-center font-sans text-ink/50">Loading products…</p>}
+                        {!loading && results.length === 0 ? (
                             <p className="mt-20 text-center font-sans text-ink/50">
                                 Nothing matches "{query}" yet — try a different word.
                             </p>
                         ) : (
                             <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4">
-                                {results.map((item) => (
-                                    <figure key={item.id}>
-                                        <motion.div
-                                            layoutId={`product-image-${item.id}`}
-                                            onClick={() => setSelected(item)}
-                                            className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl cursor-pointer"
-                                        >
-                                            <ImagePlaceholder className="absolute inset-0" />
-                                        </motion.div>
-                                        <figcaption className="mt-3">
-                                            <p className="font-sans text-xs uppercase tracking-wideish text-ink">{item.label}</p>
-                                            <p className="mt-1 font-sans text-xs uppercase tracking-wideish text-rose-deep">{item.tag}</p>
-                                        </figcaption>
-                                    </figure>
-                                ))}
+                                {results.map((item) => {
+                                    const outOfStock = item.stock <= 0
+                                    return (
+                                        <figure key={item.id}>
+                                            <motion.div
+                                                layoutId={`product-image-${item.id}`}
+                                                onClick={() => setSelected(item)}
+                                                className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl cursor-pointer"
+                                            >
+                                                <ImagePlaceholder
+                                                    src={item.image}
+                                                    alt={item.label}
+                                                    className={`absolute inset-0 ${outOfStock ? 'grayscale opacity-60' : ''}`}
+                                                />
+                                                {outOfStock && (
+                                                    <span className="absolute left-3 top-3 rounded-full bg-ink/90 px-3 py-1 font-sans text-[10px] uppercase tracking-wideish text-cream">
+                                                        Out of stock
+                                                    </span>
+                                                )}
+                                            </motion.div>
+                                            <figcaption className="mt-3">
+                                                <p className="font-sans text-xs uppercase tracking-wideish text-ink">{item.label}</p>
+                                                <p className="mt-1 font-sans text-xs uppercase tracking-wideish text-rose-deep">{item.tag}</p>
+                                            </figcaption>
+                                        </figure>
+                                    )
+                                })}
                             </div>
                         )}
                     </div>
@@ -141,7 +156,11 @@ export default function StoreModal({ isOpen, onClose }) {
                                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                                     className="relative mx-auto h-[55vh] w-full max-w-xl overflow-hidden rounded-2xl sm:h-[65vh]"
                                 >
-                                    <ImagePlaceholder className="absolute inset-0" />
+                                    <ImagePlaceholder
+                                        src={selected.image}
+                                        alt={selected.label}
+                                        className={`absolute inset-0 ${selected.stock <= 0 ? 'grayscale opacity-60' : ''}`}
+                                    />
                                 </motion.div>
 
                                 <motion.div
@@ -154,6 +173,21 @@ export default function StoreModal({ isOpen, onClose }) {
                                     <p className="mt-1 font-sans text-xs uppercase tracking-wideish text-rose-deep">{selected.tag}</p>
                                     <p className="mt-4 font-sans text-ink/70">{selected.description}</p>
                                     <p className="mt-2 font-sans font-semibold text-ink">{selected.price}</p>
+
+                                    {selected.stock <= 0 ? (
+                                        <p className="mt-6 inline-block rounded-full bg-ink/10 px-6 py-3 text-sm uppercase tracking-wideish text-ink/50">
+                                            Currently out of stock
+                                        </p>
+                                    ) : (
+                                        <a
+                                            href={whatsappLink(selected)}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm text-white transition-opacity hover:opacity-90"
+                                        >
+                                            Order on WhatsApp
+                                        </a>
+                                    )}
                                 </motion.div>
                             </motion.div>
                         )}

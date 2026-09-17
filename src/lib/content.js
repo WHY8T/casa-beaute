@@ -8,6 +8,7 @@
 export const SALON_NAME = 'Casa Beauté'
 export const TAGLINE = 'Cosmétiques • Parfumerie'
 export const LOGO_URL = '/casa-beaute/logo.png'
+export const WHATSAPP_NUMBER = '213XXXXXXXXX'
 
 export const BRANDS = [
   'PRODERMA',

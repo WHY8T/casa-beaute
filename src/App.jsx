@@ -11,6 +11,7 @@ import Marquee from './components/Marquee'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import StoreModal from './components/StoreModal'
+import Admin from './components/Admin'
 import useReducedMotion from './hooks/useReducedMotion'
 import { initLenis, destroyLenis } from './lib/lenis'
 import { MARQUEE_CTA, BRANDS } from './lib/content'
@@ -19,11 +20,24 @@ export default function App() {
   const reducedMotion = useReducedMotion()
   const [loaded, setLoaded] = useState(false)
   const [storeOpen, setStoreOpen] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
+    const checkHash = () => setIsAdmin(window.location.hash === '#admin')
+    checkHash()
+    window.addEventListener('hashchange', checkHash)
+    return () => window.removeEventListener('hashchange', checkHash)
+  }, [])
+
+  useEffect(() => {
+    if (isAdmin) return
     initLenis({ reducedMotion })
     return () => destroyLenis()
-  }, [reducedMotion])
+  }, [reducedMotion, isAdmin])
+
+  if (isAdmin) {
+    return <Admin />
+  }
 
   return (
     <>

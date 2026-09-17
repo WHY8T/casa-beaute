@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ImagePlaceholder from './ImagePlaceholder'
-import { GALLERY } from '../lib/content'
+import useProducts from '../hooks/useProducts'
+import { WHATSAPP_NUMBER } from '../lib/content'
 
 const container = {
   hidden: {},
@@ -21,6 +22,7 @@ const card = {
 }
 
 export default function Gallery({ onOpenStore }) {
+  const { products, loading } = useProducts()
   const [selected, setSelected] = useState(null)
 
   useEffect(() => {
@@ -35,14 +37,24 @@ export default function Gallery({ onOpenStore }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  const whatsappLink = (product) => {
+    const message = `Hi! I'm interested in "${product.label}"${product.price ? ` (${product.price})` : ''}.`
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
+  }
+
   return (
     <section id="gallery" className="bg-cream px-6 py-24 sm:px-10 lg:px-16">
       <h2 className="text-center font-display font-extrabold uppercase text-display-md text-ink">
         The Shelf
       </h2>
       <p className="mx-auto mt-4 max-w-md text-center font-sans text-ink/60">
-        A look at what's currently in-store — placeholder shots, swap in real product photography any time.
+        A look at what's currently in-store, updated live.
       </p>
+
+      {loading && <p className="mt-14 text-center text-ink/40">Loading products…</p>}
+      {!loading && products.length === 0 && (
+        <p className="mt-14 text-center text-ink/40">No products yet — check back soon.</p>
+      )}
 
       <motion.div
         initial="hidden"
@@ -51,32 +63,45 @@ export default function Gallery({ onOpenStore }) {
         variants={container}
         className="mx-auto mt-14 grid max-w-6xl grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4"
       >
-        {GALLERY.map((item) => (
-          <motion.figure
-            key={item.id}
-            variants={card}
-            className="group cursor-pointer"
-            onClick={() => setSelected(item)}
-          >
-            <motion.div
-              layoutId={`shelf-image-${item.id}`}
-              className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl"
+        {products.map((item) => {
+          const outOfStock = item.stock <= 0
+          return (
+            <motion.figure
+              key={item.id}
+              variants={card}
+              className="group cursor-pointer"
+              onClick={() => setSelected(item)}
             >
-              <ImagePlaceholder className="absolute inset-0 transition-transform duration-500 group-hover:scale-105" />
-              <div className="absolute inset-0 flex items-end p-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                <span className="rounded-full bg-cream/90 px-3 py-1 font-sans text-xs uppercase tracking-wideish text-ink shadow-sm">
-                  View
-                </span>
-              </div>
-            </motion.div>
-            <figcaption className="mt-3">
-              <p className="font-sans text-xs uppercase tracking-wideish text-ink transition-colors duration-300 group-hover:text-rose-deep">
-                {item.label}
-              </p>
-              <p className="mt-1 font-sans text-xs uppercase tracking-wideish text-rose-deep">{item.tag}</p>
-            </figcaption>
-          </motion.figure>
-        ))}
+              <motion.div
+                layoutId={`shelf-image-${item.id}`}
+                className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl"
+              >
+                <ImagePlaceholder
+                  src={item.image}
+                  alt={item.label}
+                  className={`absolute inset-0 transition-transform duration-500 group-hover:scale-105 ${outOfStock ? 'grayscale opacity-60' : ''
+                    }`}
+                />
+                {outOfStock && (
+                  <span className="absolute left-3 top-3 rounded-full bg-ink/90 px-3 py-1 font-sans text-[10px] uppercase tracking-wideish text-cream">
+                    Out of stock
+                  </span>
+                )}
+                <div className="absolute inset-0 flex items-end p-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                  <span className="rounded-full bg-cream/90 px-3 py-1 font-sans text-xs uppercase tracking-wideish text-ink shadow-sm">
+                    View
+                  </span>
+                </div>
+              </motion.div>
+              <figcaption className="mt-3">
+                <p className="font-sans text-xs uppercase tracking-wideish text-ink transition-colors duration-300 group-hover:text-rose-deep">
+                  {item.label}
+                </p>
+                <p className="mt-1 font-sans text-xs uppercase tracking-wideish text-rose-deep">{item.tag}</p>
+              </figcaption>
+            </motion.figure>
+          )
+        })}
       </motion.div>
 
       <div className="mt-14 flex justify-center">
@@ -110,9 +135,13 @@ export default function Gallery({ onOpenStore }) {
             <motion.div
               layoutId={`shelf-image-${selected.id}`}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="relative mx-auto h-[55vh] w-full max-w-xl overflow-hidden rounded-2xl sm:h-[65vh]"
+              className="relative mx-auto h-[50vh] w-full max-w-xl overflow-hidden rounded-2xl sm:h-[60vh]"
             >
-              <ImagePlaceholder className="absolute inset-0" />
+              <ImagePlaceholder
+                src={selected.image}
+                alt={selected.label}
+                className={`absolute inset-0 ${selected.stock <= 0 ? 'grayscale opacity-60' : ''}`}
+              />
             </motion.div>
 
             <motion.div
@@ -125,6 +154,21 @@ export default function Gallery({ onOpenStore }) {
               <p className="mt-1 font-sans text-xs uppercase tracking-wideish text-rose-deep">{selected.tag}</p>
               <p className="mt-4 font-sans text-ink/70">{selected.description}</p>
               <p className="mt-2 font-sans font-semibold text-ink">{selected.price}</p>
+
+              {selected.stock <= 0 ? (
+                <p className="mt-6 inline-block rounded-full bg-ink/10 px-6 py-3 text-sm uppercase tracking-wideish text-ink/50">
+                  Currently out of stock
+                </p>
+              ) : (
+                <a
+                  href={whatsappLink(selected)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm text-white transition-opacity hover:opacity-90"
+                >
+                  Order on WhatsApp
+                </a>
+              )}
             </motion.div>
           </motion.div>
         )}
