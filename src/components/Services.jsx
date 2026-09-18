@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import ImagePlaceholder from './ImagePlaceholder'
 import SectionWipe from './SectionWipe'
+import useProducts from '../hooks/useProducts'
 import { SERVICES } from '../lib/content'
 
 const textContainer = {
@@ -24,7 +25,9 @@ const imageReveal = {
   },
 }
 
-export default function Services() {
+export default function Services({ onShopCategory }) {
+  const { products } = useProducts()
+
   return (
     <section id="services">
       <div className="bg-cream px-6 pt-24 pb-16 text-center sm:px-10 lg:px-16">
@@ -41,6 +44,9 @@ export default function Services() {
 
       {SERVICES.map((s, i) => {
         const tinted = i % 2 === 1
+        const inStock = products.filter((p) => p.tag === s.name && p.stock > 0).length
+        const total = products.filter((p) => p.tag === s.name).length
+
         return (
           <div key={s.name}>
             <SectionWipe from={i === 0 ? 'cream' : tinted ? 'cream' : 'peach'} to={tinted ? 'peach' : 'cream'} />
@@ -53,7 +59,8 @@ export default function Services() {
                   custom={i % 2 === 1 ? 60 : -60}
                   variants={imageReveal}
                   whileHover={{ scale: 1.02 }}
-                  className={`flex justify-center ${i % 2 === 1 ? 'lg:order-2' : ''}`}
+                  onClick={() => onShopCategory?.(s.name)}
+                  className={`flex cursor-pointer justify-center ${i % 2 === 1 ? 'lg:order-2' : ''}`}
                 >
                   <div className="relative h-[320px] w-full max-w-sm overflow-hidden rounded-3xl shadow-sm sm:h-[380px]">
                     <ImagePlaceholder
@@ -61,6 +68,11 @@ export default function Services() {
                       alt={s.name}
                       className="absolute inset-0 transition-transform duration-700 hover:scale-105"
                     />
+                    {total > 0 && (
+                      <span className="absolute right-4 top-4 rounded-full bg-cream/90 px-3 py-1 font-sans text-xs uppercase tracking-wideish text-ink shadow-sm">
+                        {inStock} in stock
+                      </span>
+                    )}
                   </div>
                 </motion.div>
 
@@ -89,6 +101,14 @@ export default function Services() {
                   <motion.p variants={textItem} className="mt-5 font-sans text-sm text-ink">
                     {s.highlight}
                   </motion.p>
+                  <motion.button
+                    variants={textItem}
+                    onClick={() => onShopCategory?.(s.name)}
+                    className="mt-7 inline-flex items-center gap-3 rounded-full bg-ink px-6 py-3 font-sans text-sm text-cream transition-colors duration-300 hover:bg-rose-deep"
+                  >
+                    Shop {s.name}
+                    <span aria-hidden="true">→</span>
+                  </motion.button>
                 </motion.div>
               </div>
             </div>

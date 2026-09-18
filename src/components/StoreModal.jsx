@@ -4,18 +4,24 @@ import ImagePlaceholder from './ImagePlaceholder'
 import useProducts from '../hooks/useProducts'
 import { SALON_NAME, WHATSAPP_NUMBER } from '../lib/content'
 
-export default function StoreModal({ isOpen, onClose }) {
+const CATEGORIES = ['All', 'Skincare', 'Haircare', 'Parfumerie', 'Makeup', 'Gift Sets']
+
+export default function StoreModal({ isOpen, initialCategory, onClose }) {
     const { products, loading } = useProducts()
     const [query, setQuery] = useState('')
+    const [category, setCategory] = useState('All')
     const [selected, setSelected] = useState(null)
 
     useEffect(() => {
+        if (isOpen) {
+            setCategory(initialCategory || 'All')
+        }
         document.documentElement.classList.toggle('no-scroll', isOpen)
         if (!isOpen) {
             setQuery('')
             setSelected(null)
         }
-    }, [isOpen])
+    }, [isOpen, initialCategory])
 
     useEffect(() => {
         const onKey = (e) => {
@@ -32,11 +38,13 @@ export default function StoreModal({ isOpen, onClose }) {
 
     const results = useMemo(() => {
         const q = query.trim().toLowerCase()
-        if (!q) return products
-        return products.filter(
-            (item) => item.label.toLowerCase().includes(q) || item.tag.toLowerCase().includes(q)
-        )
-    }, [query, products])
+        return products.filter((item) => {
+            const matchesCategory = category === 'All' || item.tag === category
+            const matchesQuery =
+                !q || item.label.toLowerCase().includes(q) || item.tag.toLowerCase().includes(q)
+            return matchesCategory && matchesQuery
+        })
+    }, [query, category, products])
 
     const whatsappLink = (product) => {
         const message = `Hi! I'm interested in "${product.label}"${product.price ? ` (${product.price})` : ''}.`
@@ -92,44 +100,71 @@ export default function StoreModal({ isOpen, onClose }) {
                                 </button>
                             )}
                         </div>
+
+                        <div className="mx-auto mt-4 flex max-w-3xl flex-wrap justify-center gap-2">
+                            {CATEGORIES.map((c) => (
+                                <button
+                                    key={c}
+                                    onClick={() => setCategory(c)}
+                                    className={`rounded-full px-4 py-2 font-sans text-xs uppercase tracking-wideish transition-colors ${category === c
+                                            ? 'bg-ink text-cream'
+                                            : 'bg-white text-ink/60 hover:bg-peach'
+                                        }`}
+                                >
+                                    {c}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="flex-1 overflow-y-auto px-6 py-10 sm:px-10 lg:px-16">
                         {loading && <p className="mt-20 text-center font-sans text-ink/50">Loading products…</p>}
                         {!loading && results.length === 0 ? (
                             <p className="mt-20 text-center font-sans text-ink/50">
-                                Nothing matches "{query}" yet — try a different word.
+                                Nothing matches here yet — try a different word or category.
                             </p>
                         ) : (
-                            <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4">
-                                {results.map((item) => {
-                                    const outOfStock = item.stock <= 0
-                                    return (
-                                        <figure key={item.id}>
-                                            <motion.div
-                                                layoutId={`product-image-${item.id}`}
-                                                onClick={() => setSelected(item)}
-                                                className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl cursor-pointer"
+                            <motion.div
+                                layout
+                                className="mx-auto grid max-w-6xl grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4"
+                            >
+                                <AnimatePresence>
+                                    {results.map((item) => {
+                                        const outOfStock = item.stock <= 0
+                                        return (
+                                            <motion.figure
+                                                key={item.id}
+                                                layout
+                                                initial={{ opacity: 0, scale: 0.9 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.9 }}
+                                                transition={{ duration: 0.3 }}
                                             >
-                                                <ImagePlaceholder
-                                                    src={item.image}
-                                                    alt={item.label}
-                                                    className={`absolute inset-0 ${outOfStock ? 'grayscale opacity-60' : ''}`}
-                                                />
-                                                {outOfStock && (
-                                                    <span className="absolute left-3 top-3 rounded-full bg-ink/90 px-3 py-1 font-sans text-[10px] uppercase tracking-wideish text-cream">
-                                                        Out of stock
-                                                    </span>
-                                                )}
-                                            </motion.div>
-                                            <figcaption className="mt-3">
-                                                <p className="font-sans text-xs uppercase tracking-wideish text-ink">{item.label}</p>
-                                                <p className="mt-1 font-sans text-xs uppercase tracking-wideish text-rose-deep">{item.tag}</p>
-                                            </figcaption>
-                                        </figure>
-                                    )
-                                })}
-                            </div>
+                                                <motion.div
+                                                    layoutId={`product-image-${item.id}`}
+                                                    onClick={() => setSelected(item)}
+                                                    className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl cursor-pointer"
+                                                >
+                                                    <ImagePlaceholder
+                                                        src={item.image}
+                                                        alt={item.label}
+                                                        className={`absolute inset-0 ${outOfStock ? 'grayscale opacity-60' : ''}`}
+                                                    />
+                                                    {outOfStock && (
+                                                        <span className="absolute left-3 top-3 rounded-full bg-ink/90 px-3 py-1 font-sans text-[10px] uppercase tracking-wideish text-cream">
+                                                            Out of stock
+                                                        </span>
+                                                    )}
+                                                </motion.div>
+                                                <figcaption className="mt-3">
+                                                    <p className="font-sans text-xs uppercase tracking-wideish text-ink">{item.label}</p>
+                                                    <p className="mt-1 font-sans text-xs uppercase tracking-wideish text-rose-deep">{item.tag}</p>
+                                                </figcaption>
+                                            </motion.figure>
+                                        )
+                                    })}
+                                </AnimatePresence>
+                            </motion.div>
                         )}
                     </div>
 

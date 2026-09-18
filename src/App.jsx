@@ -20,6 +20,7 @@ export default function App() {
   const reducedMotion = useReducedMotion()
   const [loaded, setLoaded] = useState(false)
   const [storeOpen, setStoreOpen] = useState(false)
+  const [storeCategory, setStoreCategory] = useState(null)
   const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
@@ -39,6 +40,11 @@ export default function App() {
     return <Admin />
   }
 
+  function openStore(category) {
+    setStoreCategory(category || null)
+    setStoreOpen(true)
+  }
+
   return (
     <>
       <Preloader onDone={() => setLoaded(true)} />
@@ -48,11 +54,10 @@ export default function App() {
         <div className="bg-cream py-8">
           <Marquee items={BRANDS} />
         </div>
-        <Gallery onOpenStore={() => setStoreOpen(true)} />
+        <Gallery onOpenStore={() => openStore(null)} />
         <SectionWipe from="cream" to="peach" />
         <Story />
-        {/* Services renders its own internal cream/peach alternation + wipes */}
-        <Services />
+        <Services onShopCategory={(category) => openStore(category)} />
         <SectionWipe from="cream" to="peach" />
         <Testimonials />
         <div className="bg-cream py-10">
@@ -61,7 +66,11 @@ export default function App() {
         <Contact />
       </main>
       <Footer />
-      <StoreModal isOpen={storeOpen} onClose={() => setStoreOpen(false)} />
+      <StoreModal
+        isOpen={storeOpen}
+        initialCategory={storeCategory}
+        onClose={() => setStoreOpen(false)}
+      />
     </>
   )
 }
