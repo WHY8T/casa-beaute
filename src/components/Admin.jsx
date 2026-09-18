@@ -1,9 +1,32 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import useProducts from '../hooks/useProducts'
 
 const CATEGORIES = ['Skincare', 'Haircare', 'Parfumerie', 'Makeup', 'Gift Sets']
 const ORDER_STATUSES = ['pending', 'confirmed', 'delivered', 'cancelled']
+const ORIGINAL_TITLE = 'Casa Beauté Admin'
+
+function playChime() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)()
+        const notes = [880, 1046.5]
+        notes.forEach((freq, i) => {
+            const osc = ctx.createOscillator()
+            const gain = ctx.createGain()
+            osc.connect(gain)
+            gain.connect(ctx.destination)
+            osc.frequency.value = freq
+            const start = ctx.currentTime + i * 0.15
+            gain.gain.setValueAtTime(0.001, start)
+            gain.gain.exponentialRampToValueAtTime(0.25, start + 0.02)
+            gain.gain.exponentialRampToValueAtTime(0.001, start + 0.4)
+            osc.start(start)
+            osc.stop(start + 0.4)
+        })
+    } catch {
+        // audio not available in this browser context — safe to ignore
+    }
+}
 
 export default function Admin() {
     const [session, setSession] = useState(null)
@@ -18,6 +41,10 @@ export default function Admin() {
             setSession(newSession)
         })
         return () => listener.subscription.unsubscribe()
+    }, [])
+
+    useEffect(() => {
+        document.title = ORIGINAL_TITLE
     }, [])
 
     if (checkingSession) {
@@ -82,9 +109,66 @@ function Login() {
 
 function Dashboard() {
     const [tab, setTab] = useState('products')
+    const [unseenCount, setUnseenCount] = useState(0)
+    const [banner, setBanner] = useState(null)
+    const titleIntervalRef = useRef(null)
+
+    useEffect(() => {
+        const channel = supabase
+            .channel(`admin-order-alerts-${Math.random().toString(36).slice(2)}`)
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
+                setUnseenCount((c) => c + 1)
+                setBanner(payload.new)
+                playChime()
+                setTimeout(() => setBanner((current) => (current?.id === payload.new.id ? null : current)), 7000)
+            })
+            .subscribe()
+
+        return () => supabase.removeChannel(channel)
+    }, [])
+
+    useEffect(() => {
+        if (unseenCount > 0 && !titleIntervalRef.current) {
+            let flash = false
+            titleIntervalRef.current = setInterval(() => {
+                document.title = flash ? ORIGINAL_TITLE : `🔔 New Order!`
+                flash = !flash
+            }, 1000)
+        }
+        if (unseenCount === 0 && titleIntervalRef.current) {
+            clearInterval(titleIntervalRef.current)
+            titleIntervalRef.current = null
+            document.title = ORIGINAL_TITLE
+        }
+        return () => {
+            if (titleIntervalRef.current) {
+                clearInterval(titleIntervalRef.current)
+                titleIntervalRef.current = null
+            }
+        }
+    }, [unseenCount])
+
+    function goToOrders() {
+        setTab('orders')
+        setUnseenCount(0)
+        setBanner(null)
+    }
 
     return (
         <div className="min-h-screen bg-cream px-6 py-10 sm:px-10 lg:px-16">
+            {banner && (
+                <div className="fixed left-1/2 top-4 z-[200] w-[92%] max-w-sm -translate-x-1/2 rounded-2xl bg-ink px-5 py-4 text-cream shadow-xl">
+                    <p className="font-display text-sm font-bold uppercase tracking-wideish">🔔 New order</p>
+                    <p className="mt-1 text-sm text-cream/80">From {banner.customer_name} — {banner.phone}</p>
+                    <button
+                        onClick={goToOrders}
+                        className="mt-3 rounded-full bg-cream px-4 py-1.5 text-xs uppercase tracking-wideish text-ink hover:bg-rose"
+                    >
+                        View order
+                    </button>
+                </div>
+            )}
+
             <div className="mx-auto max-w-5xl">
                 <div className="flex items-center justify-between">
                     <div>
@@ -108,11 +192,16 @@ function Dashboard() {
                         Products
                     </button>
                     <button
-                        onClick={() => setTab('orders')}
-                        className={`rounded-full px-5 py-2 text-sm uppercase tracking-wideish ${tab === 'orders' ? 'bg-ink text-cream' : 'bg-white text-ink/60 hover:bg-peach'
+                        onClick={goToOrders}
+                        className={`relative rounded-full px-5 py-2 text-sm uppercase tracking-wideish ${tab === 'orders' ? 'bg-ink text-cream' : 'bg-white text-ink/60 hover:bg-peach'
                             }`}
                     >
                         Orders
+                        {unseenCount > 0 && (
+                            <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-rose-deep text-[11px] text-cream">
+                                {unseenCount}
+                            </span>
+                        )}
                     </button>
                 </div>
 

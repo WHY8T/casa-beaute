@@ -37,12 +37,12 @@ export default function Nav() {
               CB
             </span>
           )}
-          <span className="font-display font-extrabold text-lg uppercase tracking-wideish text-rose-deep sm:text-xl">
+          <span className="hidden font-display font-extrabold text-lg uppercase tracking-wideish text-rose-deep sm:inline-block sm:text-xl">
             {SALON_NAME}
           </span>
         </a>
 
-        <div className="ml-auto flex items-center gap-4 md:ml-0 md:gap-6">
+        <div className="ml-auto flex items-center gap-3 md:ml-0 md:gap-6">
           <a
             href="#contact"
             className="hidden font-sans text-xs uppercase tracking-wideish text-ink/70 transition-colors hover:text-rose-deep md:inline"
