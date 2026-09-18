@@ -144,13 +144,12 @@ export default function Gallery({ onOpenStore }) {
             <motion.div
               layoutId={`shelf-image-${selected.id}`}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="relative mx-auto h-[50vh] w-full max-w-xl sm:h-[60vh]"
+              className="relative mx-auto h-[50vh] w-full max-w-xl overflow-hidden rounded-2xl sm:h-[60vh]"
             >
-              <ProductBubble
+              <ImagePlaceholder
                 src={selected.image}
                 alt={selected.label}
-                outOfStock={selected.stock <= 0}
-                className="h-full w-full"
+                className={`absolute inset-0 ${selected.stock <= 0 ? 'grayscale opacity-60' : ''}`}
               />
             </motion.div>
 
