@@ -4,6 +4,7 @@ import ImagePlaceholder from './ImagePlaceholder'
 import useProducts from '../hooks/useProducts'
 import { useCart } from '../context/CartContext'
 import { WHATSAPP_NUMBER } from '../lib/content'
+import ProductBubble from './ProductBubble'
 
 const container = {
   hidden: {},
@@ -70,7 +71,7 @@ export default function Gallery({ onOpenStore }) {
         variants={container}
         className="mx-auto mt-14 grid max-w-6xl grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4"
       >
-        {products.map((item) => {
+        {products.map((item, index) => {
           const outOfStock = item.stock <= 0
           return (
             <motion.figure
@@ -81,20 +82,21 @@ export default function Gallery({ onOpenStore }) {
             >
               <motion.div
                 layoutId={`shelf-image-${item.id}`}
-                className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl"
+                className="relative aspect-square w-full transition-transform duration-500 group-hover:scale-[1.04]"
               >
-                <ImagePlaceholder
+                <ProductBubble
                   src={item.image}
                   alt={item.label}
-                  className={`absolute inset-0 transition-transform duration-500 group-hover:scale-105 ${outOfStock ? 'grayscale opacity-60' : ''
-                    }`}
+                  outOfStock={outOfStock}
+                  floatDelay={(index % 5) * 0.4}
+                  className="h-full w-full"
                 />
                 {outOfStock && (
-                  <span className="absolute left-3 top-3 rounded-full bg-ink/90 px-3 py-1 font-sans text-[10px] uppercase tracking-wideish text-cream">
+                  <span className="absolute left-3 top-3 z-20 rounded-full bg-ink/90 px-3 py-1 font-sans text-[10px] uppercase tracking-wideish text-cream">
                     Out of stock
                   </span>
                 )}
-                <div className="absolute inset-0 flex items-end p-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <div className="absolute inset-0 z-20 flex items-end justify-center pb-2 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
                   <span className="rounded-full bg-cream/90 px-3 py-1 font-sans text-xs uppercase tracking-wideish text-ink shadow-sm">
                     View
                   </span>
@@ -142,12 +144,13 @@ export default function Gallery({ onOpenStore }) {
             <motion.div
               layoutId={`shelf-image-${selected.id}`}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="relative mx-auto h-[50vh] w-full max-w-xl overflow-hidden rounded-2xl sm:h-[60vh]"
+              className="relative mx-auto h-[50vh] w-full max-w-xl sm:h-[60vh]"
             >
-              <ImagePlaceholder
+              <ProductBubble
                 src={selected.image}
                 alt={selected.label}
-                className={`absolute inset-0 ${selected.stock <= 0 ? 'grayscale opacity-60' : ''}`}
+                outOfStock={selected.stock <= 0}
+                className="h-full w-full"
               />
             </motion.div>
 
