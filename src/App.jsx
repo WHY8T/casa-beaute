@@ -11,7 +11,9 @@ import Marquee from './components/Marquee'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import StoreModal from './components/StoreModal'
+import CartDrawer from './components/CartDrawer'
 import Admin from './components/Admin'
+import { CartProvider } from './context/CartContext'
 import useReducedMotion from './hooks/useReducedMotion'
 import { initLenis, destroyLenis } from './lib/lenis'
 import { MARQUEE_CTA, BRANDS } from './lib/content'
@@ -46,7 +48,7 @@ export default function App() {
   }
 
   return (
-    <>
+    <CartProvider>
       <Preloader onDone={() => setLoaded(true)} />
       <Nav />
       <main>
@@ -71,6 +73,7 @@ export default function App() {
         initialCategory={storeCategory}
         onClose={() => setStoreOpen(false)}
       />
-    </>
+      <CartDrawer />
+    </CartProvider>
   )
 }

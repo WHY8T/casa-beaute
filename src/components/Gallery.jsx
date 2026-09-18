@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ImagePlaceholder from './ImagePlaceholder'
 import useProducts from '../hooks/useProducts'
+import { useCart } from '../context/CartContext'
 import { WHATSAPP_NUMBER } from '../lib/content'
 
 const container = {
@@ -23,10 +24,16 @@ const card = {
 
 export default function Gallery({ onOpenStore }) {
   const { products, loading } = useProducts()
+  const { addItem } = useCart()
   const [selected, setSelected] = useState(null)
+  const [qty, setQty] = useState(1)
 
   useEffect(() => {
     document.documentElement.classList.toggle('no-scroll', Boolean(selected))
+  }, [selected])
+
+  useEffect(() => {
+    if (selected) setQty(1)
   }, [selected])
 
   useEffect(() => {
@@ -160,14 +167,43 @@ export default function Gallery({ onOpenStore }) {
                   Currently out of stock
                 </p>
               ) : (
-                <a
-                  href={whatsappLink(selected)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm text-white transition-opacity hover:opacity-90"
-                >
-                  Order on WhatsApp
-                </a>
+                <>
+                  <div className="mt-6 flex items-center justify-center gap-4">
+                    <button
+                      onClick={() => setQty((q) => Math.max(1, q - 1))}
+                      className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/20 text-ink hover:bg-peach"
+                    >
+                      −
+                    </button>
+                    <span className="w-6 text-center text-ink">{qty}</span>
+                    <button
+                      onClick={() => setQty((q) => Math.min(selected.stock, q + 1))}
+                      className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/20 text-ink hover:bg-peach"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                    <button
+                      onClick={() => {
+                        addItem(selected, qty)
+                        setSelected(null)
+                      }}
+                      className="w-full rounded-full bg-ink px-6 py-3 text-sm text-cream transition-colors hover:bg-rose-deep sm:w-auto"
+                    >
+                      Add to cart
+                    </button>
+                    <a
+                      href={whatsappLink(selected)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm text-white transition-opacity hover:opacity-90"
+                    >
+                      Ask on WhatsApp
+                    </a>
+                  </div>
+                </>
               )}
             </motion.div>
           </motion.div>

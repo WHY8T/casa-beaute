@@ -2,15 +2,18 @@ import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ImagePlaceholder from './ImagePlaceholder'
 import useProducts from '../hooks/useProducts'
+import { useCart } from '../context/CartContext'
 import { SALON_NAME, WHATSAPP_NUMBER } from '../lib/content'
 
 const CATEGORIES = ['All', 'Skincare', 'Haircare', 'Parfumerie', 'Makeup', 'Gift Sets']
 
 export default function StoreModal({ isOpen, initialCategory, onClose }) {
     const { products, loading } = useProducts()
+    const { addItem } = useCart()
     const [query, setQuery] = useState('')
     const [category, setCategory] = useState('All')
     const [selected, setSelected] = useState(null)
+    const [qty, setQty] = useState(1)
 
     useEffect(() => {
         if (isOpen) {
@@ -22,6 +25,10 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
             setSelected(null)
         }
     }, [isOpen, initialCategory])
+
+    useEffect(() => {
+        if (selected) setQty(1)
+    }, [selected])
 
     useEffect(() => {
         const onKey = (e) => {
@@ -189,7 +196,7 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
                                 <motion.div
                                     layoutId={`product-image-${selected.id}`}
                                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                                    className="relative mx-auto h-[55vh] w-full max-w-xl overflow-hidden rounded-2xl sm:h-[65vh]"
+                                    className="relative mx-auto h-[50vh] w-full max-w-xl overflow-hidden rounded-2xl sm:h-[60vh]"
                                 >
                                     <ImagePlaceholder
                                         src={selected.image}
@@ -214,14 +221,43 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
                                             Currently out of stock
                                         </p>
                                     ) : (
-                                        <a
-                                            href={whatsappLink(selected)}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm text-white transition-opacity hover:opacity-90"
-                                        >
-                                            Order on WhatsApp
-                                        </a>
+                                        <>
+                                            <div className="mt-6 flex items-center justify-center gap-4">
+                                                <button
+                                                    onClick={() => setQty((q) => Math.max(1, q - 1))}
+                                                    className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/20 text-ink hover:bg-peach"
+                                                >
+                                                    −
+                                                </button>
+                                                <span className="w-6 text-center text-ink">{qty}</span>
+                                                <button
+                                                    onClick={() => setQty((q) => Math.min(selected.stock, q + 1))}
+                                                    className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/20 text-ink hover:bg-peach"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+
+                                            <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                                                <button
+                                                    onClick={() => {
+                                                        addItem(selected, qty)
+                                                        setSelected(null)
+                                                    }}
+                                                    className="w-full rounded-full bg-ink px-6 py-3 text-sm text-cream transition-colors hover:bg-rose-deep sm:w-auto"
+                                                >
+                                                    Add to cart
+                                                </button>
+                                                <a
+                                                    href={whatsappLink(selected)}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm text-white transition-opacity hover:opacity-90"
+                                                >
+                                                    Ask on WhatsApp
+                                                </a>
+                                            </div>
+                                        </>
                                     )}
                                 </motion.div>
                             </motion.div>

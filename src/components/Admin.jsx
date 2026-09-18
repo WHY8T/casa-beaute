@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabaseClient'
 import useProducts from '../hooks/useProducts'
 
 const CATEGORIES = ['Skincare', 'Haircare', 'Parfumerie', 'Makeup', 'Gift Sets']
+const ORDER_STATUSES = ['pending', 'confirmed', 'delivered', 'cancelled']
 
 export default function Admin() {
     const [session, setSession] = useState(null)
@@ -80,6 +81,48 @@ function Login() {
 }
 
 function Dashboard() {
+    const [tab, setTab] = useState('products')
+
+    return (
+        <div className="min-h-screen bg-cream px-6 py-10 sm:px-10 lg:px-16">
+            <div className="mx-auto max-w-5xl">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="font-display text-3xl font-extrabold uppercase text-ink">Casa Beauté Admin</h1>
+                        <p className="mt-1 text-sm text-ink/60">Manage your products and orders.</p>
+                    </div>
+                    <button
+                        onClick={() => supabase.auth.signOut()}
+                        className="rounded-full border border-ink/20 px-5 py-2 text-sm text-ink hover:bg-peach"
+                    >
+                        Log out
+                    </button>
+                </div>
+
+                <div className="mt-8 flex gap-2">
+                    <button
+                        onClick={() => setTab('products')}
+                        className={`rounded-full px-5 py-2 text-sm uppercase tracking-wideish ${tab === 'products' ? 'bg-ink text-cream' : 'bg-white text-ink/60 hover:bg-peach'
+                            }`}
+                    >
+                        Products
+                    </button>
+                    <button
+                        onClick={() => setTab('orders')}
+                        className={`rounded-full px-5 py-2 text-sm uppercase tracking-wideish ${tab === 'orders' ? 'bg-ink text-cream' : 'bg-white text-ink/60 hover:bg-peach'
+                            }`}
+                    >
+                        Orders
+                    </button>
+                </div>
+
+                {tab === 'products' ? <ProductsTab /> : <OrdersTab />}
+            </div>
+        </div>
+    )
+}
+
+function ProductsTab() {
     const { products, loading } = useProducts()
     const [editing, setEditing] = useState(null)
 
@@ -93,81 +136,61 @@ function Dashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-cream px-6 py-10 sm:px-10 lg:px-16">
-            <div className="mx-auto max-w-5xl">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="font-display text-3xl font-extrabold uppercase text-ink">Products</h1>
-                        <p className="mt-1 text-sm text-ink/60">Add, edit, or remove what's on your site.</p>
-                    </div>
-                    <button
-                        onClick={() => supabase.auth.signOut()}
-                        className="rounded-full border border-ink/20 px-5 py-2 text-sm text-ink hover:bg-peach"
-                    >
-                        Log out
-                    </button>
-                </div>
+        <div>
+            <button
+                onClick={() => setEditing({})}
+                className="mt-8 rounded-full bg-rose-deep px-6 py-3 text-sm text-cream hover:bg-ink"
+            >
+                + Add new product
+            </button>
 
-                <button
-                    onClick={() => setEditing({})}
-                    className="mt-8 rounded-full bg-rose-deep px-6 py-3 text-sm text-cream hover:bg-ink"
-                >
-                    + Add new product
-                </button>
+            {editing && <ProductForm product={editing} onClose={() => setEditing(null)} />}
 
-                {editing && (
-                    <ProductForm
-                        product={editing}
-                        onClose={() => setEditing(null)}
-                    />
+            <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {loading && <p className="text-ink/50">Loading products…</p>}
+                {!loading && products.length === 0 && (
+                    <p className="text-ink/50">No products yet — add your first one above.</p>
                 )}
-
-                <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {loading && <p className="text-ink/50">Loading products…</p>}
-                    {!loading && products.length === 0 && (
-                        <p className="text-ink/50">No products yet — add your first one above.</p>
-                    )}
-                    {products.map((p) => (
-                        <div key={p.id} className="rounded-2xl bg-white p-4 shadow-sm">
-                            <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-peach">
-                                {p.image && <img src={p.image} alt={p.label} className="h-full w-full object-cover" />}
-                                {p.stock <= 0 && (
-                                    <span className="absolute left-2 top-2 rounded-full bg-ink px-3 py-1 text-xs uppercase text-cream">
-                                        Out of stock
-                                    </span>
-                                )}
-                            </div>
-                            <p className="mt-3 font-display font-bold text-ink">{p.label}</p>
-                            <p className="text-xs uppercase tracking-wideish text-rose-deep">{p.tag}</p>
-                            <p className="mt-1 text-sm text-ink/70">{p.price}</p>
-
-                            <div className="mt-3 flex items-center gap-2">
-                                <label className="text-xs text-ink/50">Stock:</label>
-                                <input
-                                    type="number"
-                                    defaultValue={p.stock}
-                                    onBlur={(e) => handleStockChange(p.id, Number(e.target.value))}
-                                    className="w-20 rounded-lg border border-ink/15 px-2 py-1 text-sm"
-                                />
-                            </div>
-
-                            <div className="mt-3 flex gap-2">
-                                <button
-                                    onClick={() => setEditing(p)}
-                                    className="flex-1 rounded-full border border-ink/20 py-2 text-xs uppercase hover:bg-peach"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(p.id)}
-                                    className="flex-1 rounded-full border border-red-300 py-2 text-xs uppercase text-red-600 hover:bg-red-50"
-                                >
-                                    Delete
-                                </button>
-                            </div>
+                {products.map((p) => (
+                    <div key={p.id} className="rounded-2xl bg-white p-4 shadow-sm">
+                        <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-peach">
+                            {p.image && <img src={p.image} alt={p.label} className="h-full w-full object-cover" />}
+                            {p.stock <= 0 && (
+                                <span className="absolute left-2 top-2 rounded-full bg-ink px-3 py-1 text-xs uppercase text-cream">
+                                    Out of stock
+                                </span>
+                            )}
                         </div>
-                    ))}
-                </div>
+                        <p className="mt-3 font-display font-bold text-ink">{p.label}</p>
+                        <p className="text-xs uppercase tracking-wideish text-rose-deep">{p.tag}</p>
+                        <p className="mt-1 text-sm text-ink/70">{p.price}</p>
+
+                        <div className="mt-3 flex items-center gap-2">
+                            <label className="text-xs text-ink/50">Stock:</label>
+                            <input
+                                type="number"
+                                defaultValue={p.stock}
+                                onBlur={(e) => handleStockChange(p.id, Number(e.target.value))}
+                                className="w-20 rounded-lg border border-ink/15 px-2 py-1 text-sm"
+                            />
+                        </div>
+
+                        <div className="mt-3 flex gap-2">
+                            <button
+                                onClick={() => setEditing(p)}
+                                className="flex-1 rounded-full border border-ink/20 py-2 text-xs uppercase hover:bg-peach"
+                            >
+                                Edit
+                            </button>
+                            <button
+                                onClick={() => handleDelete(p.id)}
+                                className="flex-1 rounded-full border border-red-300 py-2 text-xs uppercase text-red-600 hover:bg-red-50"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     )
@@ -308,5 +331,91 @@ function ProductForm({ product, onClose }) {
                 </button>
             </div>
         </form>
+    )
+}
+
+function OrdersTab() {
+    const [orders, setOrders] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    async function load() {
+        setLoading(true)
+        const { data, error } = await supabase
+            .from('orders')
+            .select('*')
+            .order('created_at', { ascending: false })
+        if (!error) setOrders(data)
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        load()
+        const channel = supabase
+            .channel(`orders-changes-${Math.random().toString(36).slice(2)}`)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, load)
+            .subscribe()
+        return () => supabase.removeChannel(channel)
+    }, [])
+
+    async function updateStatus(id, status) {
+        await supabase.from('orders').update({ status }).eq('id', id)
+    }
+
+    return (
+        <div className="mt-8">
+            {loading && <p className="text-ink/50">Loading orders…</p>}
+            {!loading && orders.length === 0 && <p className="text-ink/50">No orders yet.</p>}
+
+            <div className="space-y-4">
+                {orders.map((order) => (
+                    <div key={order.id} className="rounded-2xl bg-white p-5 shadow-sm">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                                <p className="font-display font-bold text-ink">{order.customer_name}</p>
+                                <p className="text-sm text-ink/60">{order.phone}</p>
+                                <p className="text-sm text-ink/60">
+                                    {order.wilaya ? `${order.wilaya} — ` : ''}
+                                    {order.address}
+                                </p>
+                                {order.notes && <p className="mt-1 text-sm italic text-ink/50">"{order.notes}"</p>}
+                                <p className="mt-1 text-xs text-ink/40">
+                                    {new Date(order.created_at).toLocaleString()}
+                                </p>
+                            </div>
+
+                            <select
+                                value={order.status}
+                                onChange={(e) => updateStatus(order.id, e.target.value)}
+                                className={`rounded-full border px-4 py-2 text-xs uppercase tracking-wideish ${order.status === 'pending'
+                                        ? 'border-yellow-300 bg-yellow-50 text-yellow-700'
+                                        : order.status === 'confirmed'
+                                            ? 'border-blue-300 bg-blue-50 text-blue-700'
+                                            : order.status === 'delivered'
+                                                ? 'border-green-300 bg-green-50 text-green-700'
+                                                : 'border-red-300 bg-red-50 text-red-700'
+                                    }`}
+                            >
+                                {ORDER_STATUSES.map((s) => (
+                                    <option key={s} value={s}>
+                                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="mt-4 border-t border-ink/10 pt-4">
+                            {order.items.map((item, i) => (
+                                <div key={i} className="flex justify-between text-sm text-ink/80">
+                                    <span>
+                                        {item.name} × {item.quantity}
+                                    </span>
+                                    <span>{item.price}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
     )
 }
