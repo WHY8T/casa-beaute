@@ -73,12 +73,12 @@ export const SERVICES = [
   },
   {
     index: '05',
-    name: 'Gift Sets',
-    tagline: 'Ready-to-wrap boxes',
+    name: 'The Edit',
+    tagline: 'New in, and what everyone keeps asking for',
     description:
-      'Curated gift boxes — Sense Laverne and other luxury sets — wrapped in-store for birthdays, Eid, weddings or just because.',
-    highlight: 'Wrapped while you wait',
-    image: `${import.meta.env.BASE_URL}collections/gift-sets.jpg`,
+      'A rotating spotlight that leads with PRODERMA and whatever just landed on the shelf, alongside the pieces our regulars keep coming back for.',
+    highlight: 'Updated weekly',
+    image: null,
   },
 ]
 
