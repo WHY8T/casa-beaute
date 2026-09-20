@@ -1,120 +1,73 @@
 import { motion } from 'framer-motion'
 import ImagePlaceholder from './ImagePlaceholder'
-import SectionWipe from './SectionWipe'
-import useProducts from '../hooks/useProducts'
 import { SERVICES } from '../lib/content'
 
-const textContainer = {
+const container = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
+  visible: { transition: { staggerChildren: 0.1 } },
 }
 
-const textItem = {
+const tile = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
-}
-
-const imageReveal = {
-  hidden: (dir) => ({ opacity: 0, scale: 0.85, x: dir, filter: 'blur(12px)' }),
-  visible: {
-    opacity: 1,
-    scale: 1,
-    x: 0,
-    filter: 'blur(0px)',
-    transition: { duration: 1, ease: [0.16, 1, 0.3, 1] },
-  },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
 }
 
 export default function Services({ onShopCategory }) {
-  const { products } = useProducts()
-
   return (
-    <section id="services">
-      <div className="bg-cream px-6 pt-24 pb-16 text-center sm:px-10 lg:px-16">
-        <p className="font-display font-extrabold text-8xl leading-none text-rose sm:text-9xl">
-          {String(SERVICES.length).padStart(2, '0')}
-        </p>
-        <h2 className="mt-4 font-display font-extrabold uppercase text-display-md text-ink">
-          Collections
-        </h2>
-        <p className="mx-auto mt-4 max-w-md font-sans text-ink/60">
-          that bring PRODERMA and a curated set of international brands together, shelf by shelf.
-        </p>
+    <section id="services" className="bg-cream px-6 py-24 sm:px-10 lg:px-16">
+      <div className="mx-auto max-w-2xl text-center">
+        <h2 className="font-display font-extrabold uppercase text-display-md text-ink">Collections</h2>
+        <p className="mt-4 font-sans text-ink/60">Explore by category.</p>
       </div>
 
-      {SERVICES.map((s, i) => {
-        const tinted = i % 2 === 1
-        const inStock = products.filter((p) => p.tag === s.name && p.stock > 0).length
-        const total = products.filter((p) => p.tag === s.name).length
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.15 }}
+        variants={container}
+        className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8"
+      >
+        {SERVICES.map((s, i) => {
+          const isLast = i === SERVICES.length - 1
+          const isWideRow = isLast && SERVICES.length % 2 === 1
 
-        return (
-          <div key={s.name}>
-            <SectionWipe from={i === 0 ? 'cream' : tinted ? 'cream' : 'peach'} to={tinted ? 'peach' : 'cream'} />
-            <div className={`px-6 py-20 sm:px-10 lg:px-16 ${tinted ? 'bg-peach' : 'bg-cream'}`}>
-              <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
-                <motion.div
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.4 }}
-                  custom={i % 2 === 1 ? 60 : -60}
-                  variants={imageReveal}
-                  whileHover={{ scale: 1.02 }}
-                  onClick={() => onShopCategory?.(s.name)}
-                  className={`flex cursor-pointer justify-center ${i % 2 === 1 ? 'lg:order-2' : ''}`}
-                >
-                  <div className="relative h-[320px] w-full max-w-sm overflow-hidden rounded-3xl shadow-sm sm:h-[380px]">
-                    <ImagePlaceholder
-                      src={s.image}
-                      alt={s.name}
-                      className="absolute inset-0 transition-transform duration-700 hover:scale-105"
-                    />
-                    {total > 0 && (
-                      <span className="absolute right-4 top-4 rounded-full bg-cream/90 px-3 py-1 font-sans text-xs uppercase tracking-wideish text-ink shadow-sm">
-                        {inStock} in stock
-                      </span>
-                    )}
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.5 }}
-                  variants={textContainer}
-                  className={i % 2 === 1 ? 'lg:order-1' : ''}
-                >
-                  <motion.p variants={textItem} className="font-display font-extrabold text-4xl text-rose-deep">
-                    {s.index}/
-                  </motion.p>
-                  <motion.h3
-                    variants={textItem}
-                    className="mt-2 font-display font-extrabold uppercase text-3xl text-ink sm:text-4xl"
-                  >
-                    {s.name}
-                  </motion.h3>
-                  <motion.p variants={textItem} className="mt-1 font-sans text-sm uppercase tracking-wideish text-ink/50">
-                    {s.tagline}
-                  </motion.p>
-                  <motion.p variants={textItem} className="mt-5 max-w-md font-sans text-ink/70">
-                    {s.description}
-                  </motion.p>
-                  <motion.p variants={textItem} className="mt-5 font-sans text-sm text-ink">
-                    {s.highlight}
-                  </motion.p>
-                  <motion.button
-                    variants={textItem}
-                    onClick={() => onShopCategory?.(s.name)}
-                    className="mt-7 inline-flex items-center gap-3 rounded-full bg-ink px-6 py-3 font-sans text-sm text-cream transition-colors duration-300 hover:bg-rose-deep"
-                  >
-                    Shop {s.name}
-                    <span aria-hidden="true">→</span>
-                  </motion.button>
-                </motion.div>
+          return (
+            <motion.button
+              key={s.name}
+              variants={tile}
+              onClick={() => onShopCategory?.(s.name)}
+              className={`group relative overflow-hidden rounded-2xl text-left ${isWideRow ? 'sm:col-span-2' : ''
+                }`}
+            >
+              <div className={`relative w-full overflow-hidden ${isWideRow ? 'aspect-[21/9]' : 'aspect-[4/5]'}`}>
+                <ImagePlaceholder
+                  src={s.image}
+                  alt={s.name}
+                  className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0" />
               </div>
-            </div>
-          </div>
-        )
-      })}
+
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-6">
+                <div>
+                  <p className="font-display text-2xl font-extrabold uppercase tracking-wide text-cream sm:text-3xl">
+                    {s.name}
+                  </p>
+                  <p className="mt-1 font-sans text-xs uppercase tracking-wideish text-cream/70">
+                    {s.tagline}
+                  </p>
+                </div>
+                <span
+                  aria-hidden="true"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cream/50 text-cream transition-transform duration-300 group-hover:translate-x-1"
+                >
+                  →
+                </span>
+              </div>
+            </motion.button>
+          )
+        })}
+      </motion.div>
     </section>
   )
 }

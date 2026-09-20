@@ -7,19 +7,12 @@ import { WHATSAPP_NUMBER } from '../lib/content'
 
 const container = {
   hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.08 },
-  },
+  visible: { transition: { staggerChildren: 0.08 } },
 }
 
 const card = {
-  hidden: { opacity: 0, y: 36, scale: 0.94 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
-  },
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 }
 
 export default function Gallery({ onOpenStore }) {
@@ -27,6 +20,8 @@ export default function Gallery({ onOpenStore }) {
   const { addItem } = useCart()
   const [selected, setSelected] = useState(null)
   const [qty, setQty] = useState(1)
+
+  const featured = products.slice(0, 6)
 
   useEffect(() => {
     document.documentElement.classList.toggle('no-scroll', Boolean(selected))
@@ -51,15 +46,13 @@ export default function Gallery({ onOpenStore }) {
 
   return (
     <section id="gallery" className="bg-cream px-6 py-24 sm:px-10 lg:px-16">
-      <h2 className="text-center font-display font-extrabold uppercase text-display-md text-ink">
-        The Shelf
-      </h2>
-      <p className="mx-auto mt-4 max-w-md text-center font-sans text-ink/60">
-        A look at what's currently in-store, updated live.
-      </p>
+      <div className="mx-auto max-w-2xl text-center">
+        <h2 className="font-display font-extrabold uppercase text-display-md text-ink">Les Essentiels</h2>
+        <p className="mt-4 font-sans text-ink/60">A few favourites from the shelf.</p>
+      </div>
 
-      {loading && <p className="mt-14 text-center text-ink/40">Loading products…</p>}
-      {!loading && products.length === 0 && (
+      {loading && <p className="mt-14 text-center text-ink/40">Loading…</p>}
+      {!loading && featured.length === 0 && (
         <p className="mt-14 text-center text-ink/40">No products yet — check back soon.</p>
       )}
 
@@ -68,58 +61,53 @@ export default function Gallery({ onOpenStore }) {
         whileInView="visible"
         viewport={{ once: true, amount: 0.15 }}
         variants={container}
-        className="mx-auto mt-14 grid max-w-6xl grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4"
+        className="mx-auto mt-14 grid max-w-5xl grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3"
       >
-        {products.map((item) => {
+        {featured.map((item) => {
           const outOfStock = item.stock <= 0
           return (
-            <motion.figure
+            <motion.button
               key={item.id}
               variants={card}
-              className="group cursor-pointer"
+              className="group text-left"
               onClick={() => setSelected(item)}
             >
               <motion.div
                 layoutId={`shelf-image-${item.id}`}
-                className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl"
+                className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-peach/40"
               >
                 <ImagePlaceholder
                   src={item.image}
                   alt={item.label}
-                  className={`absolute inset-0 transition-transform duration-500 group-hover:scale-105 ${outOfStock ? 'grayscale opacity-60' : ''
+                  className={`absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.04] ${outOfStock ? 'opacity-50' : ''
                     }`}
                 />
-                {outOfStock && (
-                  <span className="absolute left-3 top-3 rounded-full bg-ink/90 px-3 py-1 font-sans text-[10px] uppercase tracking-wideish text-cream">
-                    Out of stock
-                  </span>
-                )}
-                <div className="absolute inset-0 flex items-end p-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                  <span className="rounded-full bg-cream/90 px-3 py-1 font-sans text-xs uppercase tracking-wideish text-ink shadow-sm">
-                    View
-                  </span>
-                </div>
               </motion.div>
-              <figcaption className="mt-3">
-                <p className="font-sans text-xs uppercase tracking-wideish text-ink transition-colors duration-300 group-hover:text-rose-deep">
-                  {item.label}
+              <div className="mt-4">
+                <p className="font-sans text-[11px] uppercase tracking-wideish text-ink/40">{item.tag}</p>
+                <p className="mt-1 font-display text-base text-ink">{item.label}</p>
+                <p
+                  className={`mt-1 h-5 font-sans text-sm text-ink/60 transition-opacity duration-300 ${outOfStock ? '' : 'sm:opacity-0 sm:group-hover:opacity-100'
+                    }`}
+                >
+                  {outOfStock ? <span className="text-ink/40">Sold out</span> : item.price}
                 </p>
-                <p className="mt-1 font-sans text-xs uppercase tracking-wideish text-rose-deep">{item.tag}</p>
-              </figcaption>
-            </motion.figure>
+              </div>
+            </motion.button>
           )
         })}
       </motion.div>
 
-      <div className="mt-14 flex justify-center">
-        <button
-          onClick={onOpenStore}
-          className="inline-flex items-center gap-3 rounded-full bg-ink px-7 py-4 font-sans text-sm text-cream transition-colors duration-300 hover:bg-rose-deep"
-        >
-          View the store
-          <span aria-hidden="true">→</span>
-        </button>
-      </div>
+      {!loading && products.length > featured.length && (
+        <div className="mt-14 flex justify-center">
+          <button
+            onClick={onOpenStore}
+            className="font-sans text-sm uppercase tracking-wideish text-ink/60 underline decoration-ink/20 underline-offset-4 transition-colors hover:text-rose-deep"
+          >
+            View full store
+          </button>
+        </div>
+      )}
 
       <AnimatePresence>
         {selected && (
@@ -142,67 +130,63 @@ export default function Gallery({ onOpenStore }) {
             <motion.div
               layoutId={`shelf-image-${selected.id}`}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="relative mx-auto h-[50vh] w-full max-w-xl overflow-hidden rounded-2xl sm:h-[60vh]"
+              className="relative mx-auto h-[46vh] w-full max-w-md overflow-hidden rounded-2xl sm:h-[55vh]"
             >
               <ImagePlaceholder
                 src={selected.image}
                 alt={selected.label}
-                className={`absolute inset-0 ${selected.stock <= 0 ? 'grayscale opacity-60' : ''}`}
+                className={`absolute inset-0 ${selected.stock <= 0 ? 'opacity-50' : ''}`}
               />
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.4, ease: 'easeOut' }}
-              className="mx-auto mt-6 max-w-xl px-6 text-center"
+              className="mx-auto mt-6 max-w-sm px-6 text-center"
             >
-              <p className="font-display text-2xl font-extrabold uppercase text-ink">{selected.label}</p>
-              <p className="mt-1 font-sans text-xs uppercase tracking-wideish text-rose-deep">{selected.tag}</p>
-              <p className="mt-4 font-sans text-ink/70">{selected.description}</p>
-              <p className="mt-2 font-sans font-semibold text-ink">{selected.price}</p>
+              <p className="font-display text-xl font-bold uppercase text-ink">{selected.label}</p>
+              <p className="mt-1 font-sans text-xs uppercase tracking-wideish text-ink/40">{selected.tag}</p>
+              <p className="mt-4 font-sans text-sm text-ink/60">{selected.description}</p>
+              <p className="mt-2 font-sans text-sm font-medium text-ink">{selected.price}</p>
 
               {selected.stock <= 0 ? (
-                <p className="mt-6 inline-block rounded-full bg-ink/10 px-6 py-3 text-sm uppercase tracking-wideish text-ink/50">
-                  Currently out of stock
-                </p>
+                <p className="mt-6 font-sans text-sm uppercase tracking-wideish text-ink/40">Currently sold out</p>
               ) : (
                 <>
                   <div className="mt-6 flex items-center justify-center gap-4">
                     <button
                       onClick={() => setQty((q) => Math.max(1, q - 1))}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/20 text-ink hover:bg-peach"
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/15 text-ink hover:bg-peach"
                     >
                       −
                     </button>
-                    <span className="w-6 text-center text-ink">{qty}</span>
+                    <span className="w-5 text-center text-sm text-ink">{qty}</span>
                     <button
                       onClick={() => setQty((q) => Math.min(selected.stock, q + 1))}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/20 text-ink hover:bg-peach"
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/15 text-ink hover:bg-peach"
                     >
                       +
                     </button>
                   </div>
 
-                  <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                    <button
-                      onClick={() => {
-                        addItem(selected, qty)
-                        setSelected(null)
-                      }}
-                      className="w-full rounded-full bg-ink px-6 py-3 text-sm text-cream transition-colors hover:bg-rose-deep sm:w-auto"
-                    >
-                      Add to cart
-                    </button>
-                    <a
-                      href={whatsappLink(selected)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm text-white transition-opacity hover:opacity-90"
-                    >
-                      Ask on WhatsApp
-                    </a>
-                  </div>
+                  <button
+                    onClick={() => {
+                      addItem(selected, qty)
+                      setSelected(null)
+                    }}
+                    className="mt-5 w-full rounded-full bg-ink py-3 font-sans text-sm text-cream transition-colors hover:bg-rose-deep"
+                  >
+                    Add to cart
+                  </button>
+                  <a
+                    href={whatsappLink(selected)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-3 inline-block font-sans text-xs uppercase tracking-wideish text-ink/50 underline decoration-ink/20 underline-offset-4 hover:text-ink"
+                  >
+                    Ask on WhatsApp
+                  </a>
                 </>
               )}
             </motion.div>

@@ -56,11 +56,10 @@ export default function App() {
         <div className="bg-cream py-8">
           <Marquee items={BRANDS} />
         </div>
+        <Services onShopCategory={(category) => openStore(category)} />
         <Gallery onOpenStore={() => openStore(null)} />
         <SectionWipe from="cream" to="peach" />
         <Story />
-        <Services onShopCategory={(category) => openStore(category)} />
-        <SectionWipe from="cream" to="peach" />
         <Testimonials />
         <div className="bg-cream py-10">
           <Marquee items={Array(8).fill(MARQUEE_CTA)} size="lg" />
