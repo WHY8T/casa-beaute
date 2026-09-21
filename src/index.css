@@ -61,6 +61,39 @@ textarea:focus-visible {
   animation: marquee 26s linear infinite;
 }
 
+/* "New" badge — diagonal shine sweep, like a premium product tag */
+@keyframes badge-shine {
+  0% {
+    left: -150%;
+  }
+
+  55% {
+    left: 150%;
+  }
+
+  100% {
+    left: 150%;
+  }
+}
+
+.badge-new {
+  position: relative;
+  overflow: hidden;
+}
+
+.badge-new::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  transform: skewX(-20deg);
+  animation: badge-shine 3.2s ease-in-out infinite;
+  animation-delay: var(--shine-delay, 0s);
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   *,

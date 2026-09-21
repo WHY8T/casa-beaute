@@ -56,8 +56,8 @@ export default function App() {
         <div className="bg-cream py-8">
           <Marquee items={BRANDS} />
         </div>
-        <Services onShopCategory={(category) => openStore(category)} />
         <Gallery onOpenStore={() => openStore(null)} />
+        <Services onShopCategory={(category) => openStore(category)} />
         <SectionWipe from="cream" to="peach" />
         <Story />
         <Testimonials />

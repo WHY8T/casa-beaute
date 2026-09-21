@@ -72,6 +72,15 @@ export default function Services({ onShopCategory }) {
           )
         })}
       </motion.div>
+
+      <div className="mt-14 flex justify-center">
+        <button
+          onClick={() => onShopCategory?.(null)}
+          className="font-sans text-sm uppercase tracking-wideish text-ink/60 underline decoration-ink/20 underline-offset-4 transition-colors hover:text-rose-deep"
+        >
+          Voir la boutique
+        </button>
+      </div>
     </section>
   )
 }

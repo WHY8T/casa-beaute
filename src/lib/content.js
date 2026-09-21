@@ -25,8 +25,8 @@ export const MARQUEE_CTA = 'Visit the boutique'
 
 
 export const NAV_LINKS = [
+  { label: 'Nouveautés', href: '#gallery' },
   { label: 'Collections', href: '#services' },
-  { label: 'Gallery', href: '#gallery' },
   { label: 'Story', href: '#story' },
   { label: 'Reviews', href: '#reviews' },
   { label: 'Visit', href: '#contact' },

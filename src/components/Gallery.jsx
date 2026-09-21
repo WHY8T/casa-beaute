@@ -2,22 +2,56 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ImagePlaceholder from './ImagePlaceholder'
 import useProducts from '../hooks/useProducts'
+import useReducedMotion from '../hooks/useReducedMotion'
 import { useCart } from '../context/CartContext'
 import { WHATSAPP_NUMBER } from '../lib/content'
 
 const container = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
 }
 
 const card = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { opacity: 0, y: 36, scale: 0.94 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  },
+}
+
+const badgePop = {
+  hidden: { opacity: 0, scale: 0, rotate: -18 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    rotate: 0,
+    transition: { type: 'spring', stiffness: 380, damping: 14, delay: 0.35 },
+  },
+}
+
+const HEADING = 'Nouveautés'
+
+const headingContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.045, delayChildren: 0.05 } },
+}
+
+const letter = {
+  hidden: { opacity: 0, y: 44, rotateX: -70 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    rotateX: 0,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  },
 }
 
 export default function Gallery({ onOpenStore }) {
   const { products, loading } = useProducts()
   const { addItem } = useCart()
+  const reducedMotion = useReducedMotion()
   const [selected, setSelected] = useState(null)
   const [qty, setQty] = useState(1)
 
@@ -47,8 +81,47 @@ export default function Gallery({ onOpenStore }) {
   return (
     <section id="gallery" className="bg-cream px-6 py-24 sm:px-10 lg:px-16">
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="font-display font-extrabold uppercase text-display-md text-ink">Les Essentiels</h2>
-        <p className="mt-4 font-sans text-ink/60">A few favourites from the shelf.</p>
+        {reducedMotion ? (
+          <h2 className="font-display font-extrabold uppercase text-display-md text-ink">{HEADING}</h2>
+        ) : (
+          <motion.h2
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.6 }}
+            variants={headingContainer}
+            style={{ perspective: 400 }}
+            className="font-display font-extrabold uppercase text-display-md text-ink"
+          >
+            {HEADING.split('').map((char, i) => (
+              <motion.span
+                key={i}
+                variants={letter}
+                className="inline-block"
+                style={{ transformOrigin: 'bottom' }}
+              >
+                {char === ' ' ? '\u00A0' : char}
+              </motion.span>
+            ))}
+          </motion.h2>
+        )}
+
+        <motion.div
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 0.7, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto mt-3 h-[2px] w-16 origin-center bg-rose-deep"
+        />
+
+        <motion.p
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-4 font-sans text-ink/60"
+        >
+          Just landed on the shelf.
+        </motion.p>
       </div>
 
       {loading && <p className="mt-14 text-center text-ink/40">Loading…</p>}
@@ -63,25 +136,37 @@ export default function Gallery({ onOpenStore }) {
         variants={container}
         className="mx-auto mt-14 grid max-w-5xl grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3"
       >
-        {featured.map((item) => {
+        {featured.map((item, i) => {
           const outOfStock = item.stock <= 0
           return (
             <motion.button
               key={item.id}
               variants={card}
+              whileHover={{ y: -6 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 22 }}
               className="group text-left"
               onClick={() => setSelected(item)}
             >
               <motion.div
                 layoutId={`shelf-image-${item.id}`}
-                className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-peach/40"
+                className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-peach/40 shadow-sm transition-shadow duration-500 group-hover:shadow-xl"
               >
+                {!outOfStock && (
+                  <motion.span
+                    variants={reducedMotion ? undefined : badgePop}
+                    style={{ '--shine-delay': `${1 + i * 0.4}s` }}
+                    className="badge-new absolute left-3 top-3 z-10 rounded-full bg-ink px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-wideish text-cream"
+                  >
+                    New
+                  </motion.span>
+                )}
                 <ImagePlaceholder
                   src={item.image}
                   alt={item.label}
-                  className={`absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.04] ${outOfStock ? 'opacity-50' : ''
+                  className={`absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.08] ${outOfStock ? 'opacity-50' : ''
                     }`}
                 />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/10 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
               </motion.div>
               <div className="mt-4">
                 <p className="font-sans text-[11px] uppercase tracking-wideish text-ink/40">{item.tag}</p>
