@@ -94,6 +94,16 @@ textarea:focus-visible {
   animation-delay: var(--shine-delay, 0s);
 }
 
+/* Nouveautés horizontal rail — hide the scrollbar, keep native touch/drag scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   *,

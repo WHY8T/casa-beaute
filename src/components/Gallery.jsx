@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ImagePlaceholder from './ImagePlaceholder'
 import useProducts from '../hooks/useProducts'
@@ -54,12 +54,13 @@ export default function Gallery({ onOpenStore }) {
   const reducedMotion = useReducedMotion()
   const [selected, setSelected] = useState(null)
   const [qty, setQty] = useState(1)
+  const railRef = useRef(null)
+  const pausedRef = useRef(false)
+  const resumeTimeoutRef = useRef(null)
 
-  // Newest-flagged items first; if fewer than 6 are marked, fill the rest
-  // with the most recently added products so the section never looks empty.
-  const newArrivals = products.filter((p) => p.isNew)
-  const fillers = products.filter((p) => !p.isNew)
-  const featured = [...newArrivals, ...fillers].slice(0, 6)
+  // Only products explicitly flagged "New Arrival" in the admin show up here.
+  // Everything else lives only in the full store (search / Voir la boutique).
+  const featured = products.filter((p) => p.isNew).slice(0, 8)
 
   useEffect(() => {
     document.documentElement.classList.toggle('no-scroll', Boolean(selected))
@@ -81,6 +82,53 @@ export default function Gallery({ onOpenStore }) {
     const message = `Hi! I'm interested in "${product.label}"${product.price ? ` (${product.price})` : ''}.`
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
   }
+
+  function scrollRail(direction) {
+    const el = railRef.current
+    if (!el) return
+    pauseAutoplay()
+    el.scrollBy({ left: direction * el.clientWidth * 0.82, behavior: 'smooth' })
+  }
+
+  function pauseAutoplay() {
+    pausedRef.current = true
+    window.clearTimeout(resumeTimeoutRef.current)
+    resumeTimeoutRef.current = window.setTimeout(() => {
+      pausedRef.current = false
+    }, 3200)
+  }
+
+  // Continuous, professional-carousel-style auto-advance: glides one card
+  // over every couple of seconds, loops back to the start at the end, and
+  // pauses the moment someone hovers, touches, or drags the rail themselves.
+  useEffect(() => {
+    if (reducedMotion || featured.length <= 1) return
+
+    const timer = setInterval(() => {
+      const el = railRef.current
+      if (!el || pausedRef.current) return
+
+      const rect = el.getBoundingClientRect()
+      const visible = rect.top < window.innerHeight * 0.9 && rect.bottom > window.innerHeight * 0.1
+      if (!visible) return
+
+      const firstCard = el.firstElementChild
+      const gap = 20
+      const step = firstCard ? firstCard.getBoundingClientRect().width + gap : el.clientWidth * 0.5
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4
+
+      el.scrollTo({
+        left: atEnd ? 0 : el.scrollLeft + step,
+        behavior: 'smooth',
+      })
+    }, 2400)
+
+    return () => clearInterval(timer)
+  }, [reducedMotion, featured.length])
+
+  useEffect(() => {
+    return () => window.clearTimeout(resumeTimeoutRef.current)
+  }, [])
 
   return (
     <section id="gallery" className="bg-cream px-6 py-24 sm:px-10 lg:px-16">
@@ -130,62 +178,92 @@ export default function Gallery({ onOpenStore }) {
 
       {loading && <p className="mt-14 text-center text-ink/40">Loading…</p>}
       {!loading && featured.length === 0 && (
-        <p className="mt-14 text-center text-ink/40">No products yet — check back soon.</p>
+        <p className="mt-14 text-center text-ink/40">No new arrivals yet — check back soon.</p>
       )}
 
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={container}
-        className="mx-auto mt-14 grid max-w-5xl grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3"
-      >
-        {featured.map((item, i) => {
-          const outOfStock = item.stock <= 0
-          return (
-            <motion.button
-              key={item.id}
-              variants={card}
-              whileHover={{ y: -6 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-              className="group text-left"
-              onClick={() => setSelected(item)}
-            >
-              <motion.div
-                layoutId={`shelf-image-${item.id}`}
-                className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-peach/40 shadow-sm transition-shadow duration-500 group-hover:shadow-xl"
+      <div className="relative mt-14 -mx-6 sm:-mx-10 lg:-mx-16">
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-cream to-transparent sm:w-24" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-cream to-transparent sm:w-24" />
+
+        <button
+          onClick={() => scrollRail(-1)}
+          aria-label="Scroll left"
+          className="absolute left-3 top-[38%] z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-cream text-ink shadow-md transition-colors hover:bg-rose-deep hover:text-cream sm:flex"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <path d="M15 6l-6 6 6 6" />
+          </svg>
+        </button>
+        <button
+          onClick={() => scrollRail(1)}
+          aria-label="Scroll right"
+          className="absolute right-3 top-[38%] z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-cream text-ink shadow-md transition-colors hover:bg-rose-deep hover:text-cream sm:flex"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+        </button>
+
+        <motion.div
+          ref={railRef}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={container}
+          onMouseEnter={pauseAutoplay}
+          onMouseMove={pauseAutoplay}
+          onTouchStart={pauseAutoplay}
+          onTouchMove={pauseAutoplay}
+          onPointerDown={pauseAutoplay}
+          className="no-scrollbar flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-6 pb-4 sm:gap-6 sm:px-10 lg:px-16"
+        >
+          {featured.map((item, i) => {
+            const outOfStock = item.stock <= 0
+            return (
+              <motion.button
+                key={item.id}
+                variants={card}
+                whileHover={{ y: -6 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                className="group w-[64vw] flex-none snap-start text-left sm:w-[240px] lg:w-[280px]"
+                onClick={() => setSelected(item)}
               >
-                {item.isNew && !outOfStock && (
-                  <motion.span
-                    variants={reducedMotion ? undefined : badgePop}
-                    style={{ '--shine-delay': `${1 + i * 0.4}s` }}
-                    className="badge-new absolute left-3 top-3 z-10 rounded-full bg-rose-deep px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-wideish text-cream"
-                  >
-                    New
-                  </motion.span>
-                )}
-                <ImagePlaceholder
-                  src={item.image}
-                  alt={item.label}
-                  className={`absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.08] ${outOfStock ? 'opacity-50' : ''
-                    }`}
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/10 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-              </motion.div>
-              <div className="mt-4">
-                <p className="font-sans text-[11px] uppercase tracking-wideish text-ink/40">{item.tag}</p>
-                <p className="mt-1 font-display text-base text-ink">{item.label}</p>
-                <p
-                  className={`mt-1 h-5 font-sans text-sm text-ink/60 transition-opacity duration-300 ${outOfStock ? '' : 'sm:opacity-0 sm:group-hover:opacity-100'
-                    }`}
+                <motion.div
+                  layoutId={`shelf-image-${item.id}`}
+                  className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-peach/40 shadow-sm transition-shadow duration-500 group-hover:shadow-xl"
                 >
-                  {outOfStock ? <span className="text-ink/40">Sold out</span> : item.price}
-                </p>
-              </div>
-            </motion.button>
-          )
-        })}
-      </motion.div>
+                  {item.isNew && !outOfStock && (
+                    <motion.span
+                      variants={reducedMotion ? undefined : badgePop}
+                      style={{ '--shine-delay': `${1 + i * 0.4}s` }}
+                      className="badge-new absolute left-3 top-3 z-10 rounded-full bg-rose-deep px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-wideish text-cream"
+                    >
+                      New
+                    </motion.span>
+                  )}
+                  <ImagePlaceholder
+                    src={item.image}
+                    alt={item.label}
+                    className={`absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.08] ${outOfStock ? 'opacity-50' : ''
+                      }`}
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/10 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                </motion.div>
+                <div className="mt-4">
+                  <p className="font-sans text-[11px] uppercase tracking-wideish text-ink/40">{item.tag}</p>
+                  <p className="mt-1 font-display text-base text-ink">{item.label}</p>
+                  <p
+                    className={`mt-1 h-5 font-sans text-sm text-ink/60 transition-opacity duration-300 ${outOfStock ? '' : 'sm:opacity-0 sm:group-hover:opacity-100'
+                      }`}
+                  >
+                    {outOfStock ? <span className="text-ink/40">Sold out</span> : item.price}
+                  </p>
+                </div>
+              </motion.button>
+            )
+          })}
+        </motion.div>
+      </div>
 
       {!loading && products.length > featured.length && (
         <div className="mt-14 flex justify-center">

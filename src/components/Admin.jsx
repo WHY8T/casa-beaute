@@ -325,7 +325,18 @@ function ProductForm({ product, onClose }) {
             let imageUrl = product.image || null
 
             if (file) {
-                const fileName = `${Date.now()}-${file.name}`
+                // Supabase Storage rejects keys with accents, spaces, or symbols
+                // (e.g. "téléchargé (2).jpg" → 400 Invalid key), so strip those out.
+                const extMatch = file.name.match(/\.[a-zA-Z0-9]+$/)
+                const ext = extMatch ? extMatch[0].toLowerCase() : ''
+                const baseName = file.name
+                    .replace(ext, '')
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '') // strip accents (é → e)
+                    .replace(/[^a-zA-Z0-9]+/g, '-') // spaces/parens/etc → dash
+                    .replace(/^-+|-+$/g, '') // trim leading/trailing dashes
+                    .toLowerCase()
+                const fileName = `${Date.now()}-${baseName || 'photo'}${ext}`
                 const { error: uploadError } = await supabase.storage
                     .from('product-images')
                     .upload(fileName, file)
