@@ -12,7 +12,7 @@ export default function Nav() {
 
     return (
         <header className="fixed inset-x-0 top-0 z-50 bg-cream/85 backdrop-blur-md shadow-sm">
-            <nav className="relative flex items-center justify-between px-4 py-4 sm:px-10 sm:py-5 lg:px-16">
+            <nav className="relative flex items-center justify-between px-6 py-5 sm:px-10 lg:px-16">
                 <ul className="hidden items-center gap-8 md:flex">
                     {NAV_LINKS.map((link) => (
                         <li key={link.href}>
@@ -28,25 +28,21 @@ export default function Nav() {
 
                 <a
                     href="#top"
-                    className="flex min-w-0 shrink items-center gap-2 md:absolute md:left-1/2 md:top-1/2 md:shrink-0 md:-translate-x-1/2 md:-translate-y-1/2"
+                    className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2"
                 >
                     {LOGO_URL ? (
-                        <img
-                            src={LOGO_URL}
-                            alt={SALON_NAME}
-                            className="h-7 w-7 shrink-0 object-contain sm:h-8 sm:w-8 md:h-9 md:w-9"
-                        />
+                        <img src={LOGO_URL} alt={SALON_NAME} className="h-8 w-8 object-contain sm:h-9 sm:w-9" />
                     ) : (
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-rose-deep font-display text-xs font-extrabold text-rose-deep sm:h-8 sm:w-8 md:h-9 md:w-9">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-rose-deep font-display text-xs font-extrabold text-rose-deep sm:h-9 sm:w-9">
                             CB
                         </span>
                     )}
-                    <span className="truncate font-display font-extrabold text-base uppercase tracking-wideish text-cream sm:text-lg md:text-xl">
+                    <span className="hidden font-display font-extrabold text-lg uppercase tracking-wideish text-rose-deep sm:inline-block sm:text-xl">
                         {SALON_NAME}
                     </span>
                 </a>
 
-                <div className="flex shrink-0 items-center gap-2 sm:gap-3 md:gap-6">
+                <div className="ml-auto flex items-center gap-3 md:ml-0 md:gap-6">
                     <a
                         href="#contact"
                         className="hidden font-sans text-xs uppercase tracking-wideish text-ink/70 transition-colors hover:text-rose-deep md:inline"
@@ -57,7 +53,7 @@ export default function Nav() {
                     <button
                         onClick={() => setIsOpen(true)}
                         aria-label="Open cart"
-                        className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink hover:bg-peach"
+                        className="relative flex h-10 w-10 items-center justify-center rounded-full text-ink hover:bg-peach"
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
                             <circle cx="9" cy="21" r="1" />
@@ -72,7 +68,7 @@ export default function Nav() {
                     </button>
 
                     <button
-                        className="flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-1.5 md:hidden"
+                        className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden"
                         onClick={() => setOpen((o) => !o)}
                         aria-label={open ? 'Close menu' : 'Open menu'}
                         aria-expanded={open}
