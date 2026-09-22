@@ -155,7 +155,7 @@ export default function Gallery({ onOpenStore }) {
                   <motion.span
                     variants={reducedMotion ? undefined : badgePop}
                     style={{ '--shine-delay': `${1 + i * 0.4}s` }}
-                    className="badge-new absolute left-3 top-3 z-10 rounded-full bg-ink px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-wideish text-cream"
+                    className="badge-new absolute left-3 top-3 z-10 rounded-full bg-rose-deep px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-wideish text-cream"
                   >
                     New
                   </motion.span>
@@ -187,7 +187,7 @@ export default function Gallery({ onOpenStore }) {
         <div className="mt-14 flex justify-center">
           <button
             onClick={onOpenStore}
-            className="font-sans text-sm uppercase tracking-wideish text-ink/60 underline decoration-ink/20 underline-offset-4 transition-colors hover:text-rose-deep"
+            className="rounded-full border-2 border-rose-deep px-8 py-3 font-sans text-sm uppercase tracking-wideish text-rose-deep transition-all duration-300 hover:bg-rose-deep hover:text-cream hover:shadow-lg hover:shadow-rose-deep/20"
           >
             View full store
           </button>

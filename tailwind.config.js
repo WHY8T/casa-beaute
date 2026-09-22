@@ -8,8 +8,8 @@ export default {
         cream: '#FAFAFA',
         peach: '#ECECEC',
         rose: {
-          DEFAULT: '#AFAFAF',
-          deep: '#4A4A4A',
+          DEFAULT: '#A6304C',
+          deep: '#5E1522',
         },
       },
       fontFamily: {
