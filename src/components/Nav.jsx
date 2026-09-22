@@ -41,7 +41,7 @@ export default function Nav() {
                             CB
                         </span>
                     )}
-                    <span className="truncate font-display font-extrabold text-base uppercase tracking-wideish text-rose-deep sm:text-lg md:text-xl">
+                    <span className="truncate font-display font-extrabold text-base uppercase tracking-wideish text-cream sm:text-lg md:text-xl">
                         {SALON_NAME}
                     </span>
                 </a>

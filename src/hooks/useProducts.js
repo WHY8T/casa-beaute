@@ -35,6 +35,7 @@ export default function useProducts() {
                         description: p.description,
                         image: p.image_url,
                         stock: p.stock,
+                        isNew: p.is_new ?? false,
                     }))
                 )
             }

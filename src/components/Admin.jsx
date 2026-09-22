@@ -224,6 +224,10 @@ function ProductsTab() {
         await supabase.from('products').update({ stock: newStock }).eq('id', id)
     }
 
+    async function handleNewToggle(id, value) {
+        await supabase.from('products').update({ is_new: value }).eq('id', id)
+    }
+
     return (
         <div>
             <button
@@ -249,6 +253,11 @@ function ProductsTab() {
                                     Out of stock
                                 </span>
                             )}
+                            {p.isNew && (
+                                <span className="absolute right-2 top-2 rounded-full bg-rose-deep px-3 py-1 text-xs uppercase text-cream">
+                                    New
+                                </span>
+                            )}
                         </div>
                         <p className="mt-3 font-display font-bold text-ink">{p.label}</p>
                         <p className="text-xs uppercase tracking-wideish text-rose-deep">{p.tag}</p>
@@ -263,6 +272,16 @@ function ProductsTab() {
                                 className="w-20 rounded-lg border border-ink/15 px-2 py-1 text-sm"
                             />
                         </div>
+
+                        <label className="mt-3 flex cursor-pointer items-center gap-2">
+                            <input
+                                type="checkbox"
+                                checked={p.isNew}
+                                onChange={(e) => handleNewToggle(p.id, e.target.checked)}
+                                className="h-4 w-4 accent-rose-deep"
+                            />
+                            <span className="text-xs text-ink/60">New arrival</span>
+                        </label>
 
                         <div className="mt-3 flex gap-2">
                             <button
@@ -292,6 +311,7 @@ function ProductForm({ product, onClose }) {
     const [price, setPrice] = useState(product.price || '')
     const [description, setDescription] = useState(product.description || '')
     const [stock, setStock] = useState(product.stock ?? 0)
+    const [isNew, setIsNew] = useState(product.isNew ?? false)
     const [file, setFile] = useState(null)
     const [busy, setBusy] = useState(false)
     const [error, setError] = useState('')
@@ -324,6 +344,7 @@ function ProductForm({ product, onClose }) {
                 description,
                 stock: Number(stock),
                 image_url: imageUrl,
+                is_new: isNew,
             }
 
             if (isEdit) {
@@ -401,6 +422,21 @@ function ProductForm({ product, onClose }) {
                 className="mt-1 w-full text-sm"
             />
 
+            <label className="mt-5 flex cursor-pointer items-center gap-3 rounded-xl border-2 border-rose-deep/30 bg-rose-deep/5 px-4 py-3 transition-colors hover:border-rose-deep/60">
+                <input
+                    type="checkbox"
+                    checked={isNew}
+                    onChange={(e) => setIsNew(e.target.checked)}
+                    className="h-4 w-4 accent-rose-deep"
+                />
+                <span>
+                    <span className="block text-sm font-medium text-ink">✨ Mark as New Arrival</span>
+                    <span className="block text-xs text-ink/50">
+                        Shows this product in the "Nouveautés" section on the homepage, tagged under its category.
+                    </span>
+                </span>
+            </label>
+
             {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
             <div className="mt-6 flex gap-3">
@@ -476,12 +512,12 @@ function OrdersTab() {
                                 value={order.status}
                                 onChange={(e) => updateStatus(order.id, e.target.value)}
                                 className={`rounded-full border px-4 py-2 text-xs uppercase tracking-wideish ${order.status === 'pending'
-                                        ? 'border-yellow-300 bg-yellow-50 text-yellow-700'
-                                        : order.status === 'confirmed'
-                                            ? 'border-blue-300 bg-blue-50 text-blue-700'
-                                            : order.status === 'delivered'
-                                                ? 'border-green-300 bg-green-50 text-green-700'
-                                                : 'border-red-300 bg-red-50 text-red-700'
+                                    ? 'border-yellow-300 bg-yellow-50 text-yellow-700'
+                                    : order.status === 'confirmed'
+                                        ? 'border-blue-300 bg-blue-50 text-blue-700'
+                                        : order.status === 'delivered'
+                                            ? 'border-green-300 bg-green-50 text-green-700'
+                                            : 'border-red-300 bg-red-50 text-red-700'
                                     }`}
                             >
                                 {ORDER_STATUSES.map((s) => (

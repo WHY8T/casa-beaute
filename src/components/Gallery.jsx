@@ -55,7 +55,11 @@ export default function Gallery({ onOpenStore }) {
   const [selected, setSelected] = useState(null)
   const [qty, setQty] = useState(1)
 
-  const featured = products.slice(0, 6)
+  // Newest-flagged items first; if fewer than 6 are marked, fill the rest
+  // with the most recently added products so the section never looks empty.
+  const newArrivals = products.filter((p) => p.isNew)
+  const fillers = products.filter((p) => !p.isNew)
+  const featured = [...newArrivals, ...fillers].slice(0, 6)
 
   useEffect(() => {
     document.documentElement.classList.toggle('no-scroll', Boolean(selected))
@@ -151,7 +155,7 @@ export default function Gallery({ onOpenStore }) {
                 layoutId={`shelf-image-${item.id}`}
                 className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-peach/40 shadow-sm transition-shadow duration-500 group-hover:shadow-xl"
               >
-                {!outOfStock && (
+                {item.isNew && !outOfStock && (
                   <motion.span
                     variants={reducedMotion ? undefined : badgePop}
                     style={{ '--shine-delay': `${1 + i * 0.4}s` }}
