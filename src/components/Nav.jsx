@@ -28,7 +28,7 @@ export default function Nav() {
 
                 <a
                     href="#top"
-                    className="absolute left-1/2 top-1/2 flex max-w-[58vw] min-w-0 -translate-x-1/2 -translate-y-1/2 items-center gap-2 sm:max-w-none"
+                    className="flex min-w-0 shrink items-center gap-2 md:absolute md:left-1/2 md:top-1/2 md:shrink-0 md:-translate-x-1/2 md:-translate-y-1/2"
                 >
                     {LOGO_URL ? (
                         <img
@@ -37,16 +37,16 @@ export default function Nav() {
                             className="h-7 w-7 shrink-0 object-contain sm:h-8 sm:w-8 md:h-9 md:w-9"
                         />
                     ) : (
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-ink font-display text-xs font-extrabold text-ink sm:h-8 sm:w-8 md:h-9 md:w-9">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-rose-deep font-display text-xs font-extrabold text-rose-deep sm:h-8 sm:w-8 md:h-9 md:w-9">
                             CB
                         </span>
                     )}
-                    <span className="truncate font-display font-extrabold text-base uppercase tracking-wideish text-ink sm:text-lg md:text-xl">
+                    <span className="truncate font-display font-extrabold text-base uppercase tracking-wideish text-rose-deep sm:text-lg md:text-xl">
                         {SALON_NAME}
                     </span>
                 </a>
 
-                <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3 md:gap-6">
+                <div className="flex shrink-0 items-center gap-2 sm:gap-3 md:gap-6">
                     <a
                         href="#contact"
                         className="hidden font-sans text-xs uppercase tracking-wideish text-ink/70 transition-colors hover:text-rose-deep md:inline"
