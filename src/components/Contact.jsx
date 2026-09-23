@@ -30,7 +30,7 @@ export default function Contact() {
 
           <div className="mt-14 flex flex-col gap-8">
             <div>
-              <p className="font-sans text-xs uppercase tracking-wideish text-ink/70">Message us</p>
+              <p className="font-sans text-xs uppercase tracking-wideish text-ink/70">Écrivez-nous</p>
               <a
                 href={CONTACT.instagramUrl}
                 target="_blank"
@@ -50,12 +50,12 @@ export default function Contact() {
                 rel="noreferrer"
                 className="mt-2 inline-flex items-center gap-2 font-sans text-sm text-rose-deep transition-colors hover:text-rose"
               >
-                Get directions →
+                Itinéraire →
               </a>
             </div>
 
             <div>
-              <p className="font-sans text-xs uppercase tracking-wideish text-ink/70">Hours</p>
+              <p className="font-sans text-xs uppercase tracking-wideish text-ink/70">Horaires</p>
               <ul className="mt-2 flex flex-col gap-1">
                 {CONTACT.hours.map((h) => (
                   <li key={h.day} className="flex justify-between gap-8 font-sans text-ink">
@@ -77,22 +77,22 @@ export default function Contact() {
         >
           {submitted ? (
             <div className="flex h-full min-h-[320px] flex-col items-start justify-center gap-3">
-              <p className="font-display font-extrabold text-3xl text-ink">Message sent.</p>
+              <p className="font-display font-extrabold text-3xl text-ink">Message envoyé.</p>
               <p className="font-sans text-ink/60">
-                We&rsquo;ll reply by Instagram or email within one business day.
+                Nous vous répondrons par Instagram ou email sous un jour ouvré.
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <Field label="Name" name="name" type="text" required />
-                <Field label="Phone" name="phone" type="tel" required />
+                <Field label="Nom" name="name" type="text" required />
+                <Field label="Téléphone" name="phone" type="tel" required />
               </div>
               <Field label="Email" name="email" type="email" required />
 
               <div>
                 <label htmlFor="service" className="font-sans text-sm text-ink/60">
-                  Category
+                  Catégorie
                 </label>
                 <select
                   id="service"
@@ -102,7 +102,7 @@ export default function Contact() {
                   defaultValue=""
                 >
                   <option value="" disabled>
-                    What are you looking for?
+                    Que recherchez-vous ?
                   </option>
                   {SERVICES.map((s) => (
                     <option key={s.name} value={s.name}>
@@ -114,7 +114,7 @@ export default function Contact() {
 
               <div>
                 <label htmlFor="notes" className="font-sans text-sm text-ink/60">
-                  What are you after?
+                  Que recherchez-vous exactement ?
                 </label>
                 <textarea
                   id="notes"
@@ -128,7 +128,7 @@ export default function Contact() {
                 type="submit"
                 className="mt-2 inline-flex w-fit items-center gap-3 rounded-full bg-rose-deep px-7 py-4 font-sans text-sm text-cream transition-colors duration-300 hover:bg-rose"
               >
-                Send inquiry
+                Envoyer la demande
               </button>
             </form>
           )}

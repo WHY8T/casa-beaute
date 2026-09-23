@@ -54,12 +54,12 @@ export default function Nav() {
                         href="#contact"
                         className="hidden font-sans text-xs uppercase tracking-wideish text-ink/70 transition-colors hover:text-rose-deep md:inline"
                     >
-                        Visit us
+                        Nous trouver
                     </a>
 
                     <button
                         onClick={() => setIsOpen(true)}
-                        aria-label="Open cart"
+                        aria-label="Ouvrir le panier"
                         className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink hover:bg-peach"
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -77,7 +77,7 @@ export default function Nav() {
                     <button
                         className="flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-1.5 md:hidden"
                         onClick={() => setOpen((o) => !o)}
-                        aria-label={open ? 'Close menu' : 'Open menu'}
+                        aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}
                         aria-expanded={open}
                     >
                         <span

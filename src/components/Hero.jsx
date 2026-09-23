@@ -47,7 +47,7 @@ export default function Hero() {
         </h1>
 
         <p className="mt-6 max-w-md font-sans text-lg text-ink/70">
-          engineered for a shelf you can trust
+          un rayon pensé pour mériter votre confiance
         </p>
 
         <div className="mt-10">
@@ -55,7 +55,7 @@ export default function Hero() {
             href="#contact"
             className="inline-flex items-center gap-3 rounded-full bg-rose-deep px-7 py-4 font-sans text-sm text-cream transition-colors duration-300 hover:bg-rose"
           >
-            Visit the boutique
+            Visitez la boutique
             <span aria-hidden="true">→</span>
           </a>
         </div>

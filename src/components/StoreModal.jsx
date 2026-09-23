@@ -5,19 +5,19 @@ import useProducts from '../hooks/useProducts'
 import { useCart } from '../context/CartContext'
 import { SALON_NAME, WHATSAPP_NUMBER } from '../lib/content'
 
-const CATEGORIES = ['All', 'Skincare', 'Haircare', 'Parfumerie', 'Makeup', 'Gift Sets']
+const CATEGORIES = ['Tous', 'Soins de la peau', 'Cheveux', 'Parfumerie', 'Maquillage', 'Coffrets cadeaux']
 
 export default function StoreModal({ isOpen, initialCategory, onClose }) {
     const { products, loading } = useProducts()
     const { addItem } = useCart()
     const [query, setQuery] = useState('')
-    const [category, setCategory] = useState('All')
+    const [category, setCategory] = useState('Tous')
     const [selected, setSelected] = useState(null)
     const [qty, setQty] = useState(1)
 
     useEffect(() => {
         if (isOpen) {
-            setCategory(initialCategory || 'All')
+            setCategory(initialCategory || 'Tous')
         }
         document.documentElement.classList.toggle('no-scroll', isOpen)
         if (!isOpen) {
@@ -46,7 +46,7 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
     const results = useMemo(() => {
         const q = query.trim().toLowerCase()
         return products.filter((item) => {
-            const matchesCategory = category === 'All' || item.tag === category
+            const matchesCategory = category === 'Tous' || item.tag === category
             const matchesQuery =
                 !q || item.label.toLowerCase().includes(q) || item.tag.toLowerCase().includes(q)
             return matchesCategory && matchesQuery
@@ -54,7 +54,7 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
     }, [query, category, products])
 
     const whatsappLink = (product) => {
-        const message = `Hi! I'm interested in "${product.label}"${product.price ? ` (${product.price})` : ''}.`
+        const message = `Bonjour ! Je suis intéressé(e) par "${product.label}"${product.price ? ` (${product.price})` : ''}.`
         return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
     }
 
@@ -72,10 +72,10 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
                     aria-label={`${SALON_NAME} store`}
                 >
                     <div className="flex items-center justify-between border-b border-ink/10 px-6 py-5 sm:px-10 lg:px-16">
-                        <p className="font-display font-extrabold uppercase text-xl text-ink">The Store</p>
+                        <p className="font-display font-extrabold uppercase text-xl text-ink">La Boutique</p>
                         <button
                             onClick={onClose}
-                            aria-label="Close store"
+                            aria-label="Fermer la boutique"
                             className="flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-peach"
                         >
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -95,7 +95,7 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
                                 type="text"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder='Search products, e.g. "serum" or "makeup"'
+                                placeholder='Rechercher un produit, ex. "sérum" ou "maquillage"'
                                 className="w-full bg-transparent font-sans text-sm text-ink placeholder:text-ink/40 outline-none"
                             />
                             {query && (
@@ -103,7 +103,7 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
                                     onClick={() => setQuery('')}
                                     className="shrink-0 font-sans text-xs uppercase tracking-wideish text-ink/40 hover:text-ink"
                                 >
-                                    Clear
+                                    Effacer
                                 </button>
                             )}
                         </div>
@@ -114,8 +114,8 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
                                     key={c}
                                     onClick={() => setCategory(c)}
                                     className={`rounded-full px-4 py-2 font-sans text-xs uppercase tracking-wideish transition-colors ${category === c
-                                            ? 'bg-ink text-cream'
-                                            : 'bg-white text-ink/60 hover:bg-peach'
+                                        ? 'bg-ink text-cream'
+                                        : 'bg-white text-ink/60 hover:bg-peach'
                                         }`}
                                 >
                                     {c}
@@ -125,10 +125,10 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
                     </div>
 
                     <div className="flex-1 overflow-y-auto px-6 py-10 sm:px-10 lg:px-16">
-                        {loading && <p className="mt-20 text-center font-sans text-ink/50">Loading products…</p>}
+                        {loading && <p className="mt-20 text-center font-sans text-ink/50">Chargement des produits…</p>}
                         {!loading && results.length === 0 ? (
                             <p className="mt-20 text-center font-sans text-ink/50">
-                                Nothing matches here yet — try a different word or category.
+                                Rien à afficher pour l'instant — essayez un autre mot ou une autre catégorie.
                             </p>
                         ) : (
                             <motion.div
@@ -159,7 +159,7 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
                                                     />
                                                     {outOfStock && (
                                                         <span className="absolute left-3 top-3 rounded-full bg-ink/90 px-3 py-1 font-sans text-[10px] uppercase tracking-wideish text-cream">
-                                                            Out of stock
+                                                            Épuisé
                                                         </span>
                                                     )}
                                                 </motion.div>
@@ -185,7 +185,7 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
                             >
                                 <button
                                     onClick={() => setSelected(null)}
-                                    aria-label="Close product"
+                                    aria-label="Fermer le produit"
                                     className="self-end m-6 flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-peach"
                                 >
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -218,7 +218,7 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
 
                                     {selected.stock <= 0 ? (
                                         <p className="mt-6 inline-block rounded-full bg-ink/10 px-6 py-3 text-sm uppercase tracking-wideish text-ink/50">
-                                            Currently out of stock
+                                            Actuellement en rupture de stock
                                         </p>
                                     ) : (
                                         <>
@@ -246,7 +246,7 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
                                                     }}
                                                     className="w-full rounded-full bg-ink px-6 py-3 text-sm text-cream transition-colors hover:bg-rose-deep sm:w-auto"
                                                 >
-                                                    Add to cart
+                                                    Ajouter au panier
                                                 </button>
                                                 <a
                                                     href={whatsappLink(selected)}
@@ -254,7 +254,7 @@ export default function StoreModal({ isOpen, initialCategory, onClose }) {
                                                     rel="noreferrer"
                                                     className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm text-white transition-opacity hover:opacity-90"
                                                 >
-                                                    Ask on WhatsApp
+                                                    Demander sur WhatsApp
                                                 </a>
                                             </div>
                                         </>

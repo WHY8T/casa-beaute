@@ -17,7 +17,7 @@ export default function Services({ onShopCategory }) {
     <section id="services" className="bg-cream px-6 py-24 sm:px-10 lg:px-16">
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="font-display font-extrabold uppercase text-display-md text-ink">Collections</h2>
-        <p className="mt-4 font-sans text-ink/60">Explore by category.</p>
+        <p className="mt-4 font-sans text-ink/60">Explorez par catégorie.</p>
       </div>
 
       <motion.div

@@ -10,31 +10,31 @@ export default function Footer() {
           className="flex w-full max-w-sm items-center gap-3 border-b border-ink/30 pb-2 sm:w-auto"
         >
           <label htmlFor="newsletter" className="sr-only">
-            Email address
+            Adresse email
           </label>
           <input
             id="newsletter"
             type="email"
             required
-            placeholder="Subscribe to our newsletter"
+            placeholder="Abonnez-vous à notre newsletter"
             className="w-full bg-transparent font-sans text-sm text-ink placeholder:text-ink/40 outline-none"
           />
           <button type="submit" className="font-sans text-xs uppercase tracking-wideish text-rose-deep">
-            Submit
+            Envoyer
           </button>
         </form>
       </div>
 
       <div className="grid grid-cols-1 gap-12 border-b border-ink/10 pb-16 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <p className="font-sans text-xs uppercase tracking-wideish text-ink/50">About</p>
+          <p className="font-sans text-xs uppercase tracking-wideish text-ink/50">À propos</p>
           <p className="mt-4 max-w-[24ch] font-sans text-sm text-ink/60">
-            A cosmetics &amp; parfumerie boutique in Sidi Bel Abbès, Algeria.
+            Une boutique de cosmétiques &amp; parfumerie à Sidi Bel Abbès, Algérie.
           </p>
         </div>
 
         <div>
-          <p className="font-sans text-xs uppercase tracking-wideish text-ink/50">Navigate</p>
+          <p className="font-sans text-xs uppercase tracking-wideish text-ink/50">Navigation</p>
           <ul className="mt-4 flex flex-col gap-2">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
@@ -73,7 +73,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <p className="font-sans text-xs uppercase tracking-wideish text-ink/50">Hours</p>
+          <p className="font-sans text-xs uppercase tracking-wideish text-ink/50">Horaires</p>
           <ul className="mt-4 flex flex-col gap-2 font-sans text-sm text-ink/70">
             {CONTACT.hours.map((h) => (
               <li key={h.day} className="flex justify-between gap-6">
@@ -86,7 +86,7 @@ export default function Footer() {
       </div>
 
       <div className="flex flex-col items-start justify-between gap-3 pt-8 font-sans text-xs text-ink/40 sm:flex-row sm:items-center">
-        <span>© {new Date().getFullYear()} {SALON_NAME}. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} {SALON_NAME}. Tous droits réservés.</span>
         <span>{CONTACT.address}</span>
       </div>
     </footer>

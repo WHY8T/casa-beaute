@@ -21,15 +21,15 @@ export const BRANDS = [
   'La Roche-Posay',
 ]
 
-export const MARQUEE_CTA = 'Visit the boutique'
+export const MARQUEE_CTA = 'Visitez la boutique'
 
 
 export const NAV_LINKS = [
   { label: 'Nouveautés', href: '#gallery' },
   { label: 'Collections', href: '#services' },
-  { label: 'Story', href: '#story' },
-  { label: 'Reviews', href: '#reviews' },
-  { label: 'Visit', href: '#contact' },
+  { label: 'Histoire', href: '#story' },
+  { label: 'Avis', href: '#reviews' },
+  { label: 'Visite', href: '#contact' },
 ]
 
 // Product collections in place of treatments — still a genuine five-item
@@ -37,106 +37,106 @@ export const NAV_LINKS = [
 export const SERVICES = [
   {
     index: '01',
-    name: 'Skincare',
-    tagline: 'Cleansers, serums & SPF',
+    name: 'Soins de la peau',
+    tagline: 'Nettoyants, sérums & protection solaire',
     description:
-      'Daily skincare built around PRODERMA alongside a curated shelf of international brands — cleansers, serums, moisturisers and sun care for every skin type.',
-    highlight: 'Featuring PRODERMA',
+      'Des soins du quotidien construits autour de PRODERMA, aux côtés d\u2019une sélection de marques internationales — nettoyants, sérums, hydratants et soins solaires pour tous les types de peau.',
+    highlight: 'Avec PRODERMA',
     image: `${import.meta.env.BASE_URL}collections/skincare.jpg`,
   },
   {
     index: '02',
-    name: 'Haircare & Styling',
-    tagline: 'Tools & treatments',
+    name: 'Cheveux & Coiffage',
+    tagline: 'Outils & soins',
     description:
-      'Straighteners, curling wands and brushes from Enzo, Remington and Nashi, plus the shampoos and treatments that keep hair healthy between salon visits.',
+      'Lisseurs, fers à boucler et brosses signés Enzo, Remington et Nashi, ainsi que les shampoings et soins qui gardent les cheveux en forme entre deux passages en salon.',
     highlight: 'Enzo · Remington · Nashi',
     image: `${import.meta.env.BASE_URL}collections/haircare.jpg`,
   },
   {
     index: '03',
     name: 'Parfumerie',
-    tagline: 'Designer & niche fragrance',
+    tagline: 'Parfums de créateurs & confidentiels',
     description:
-      'A fragrance wall spanning designer houses and harder-to-find niche perfumers, for her and for him — come in and smell before you commit.',
-    highlight: 'International houses',
+      'Un mur de parfums, entre grandes maisons et créateurs plus confidentiels, pour elle et pour lui — venez sentir avant de choisir.',
+    highlight: 'Maisons internationales',
     image: `${import.meta.env.BASE_URL}collections/parfumerie.jpg`,
   },
   {
     index: '04',
-    name: 'Makeup',
-    tagline: 'Complexion, eyes & lips',
+    name: 'Maquillage',
+    tagline: 'Teint, yeux & lèvres',
     description:
-      'Foundations matched to real undertones, plus the eye and lip essentials from the international beauty brands our regulars ask for by name.',
-    highlight: 'New arrivals weekly',
+      'Des fonds de teint adaptés aux vraies carnations, ainsi que les essentiels yeux et lèvres des marques de beauté internationales que nos habitué(e)s réclament par leur nom.',
+    highlight: 'Nouveautés chaque semaine',
     image: `${import.meta.env.BASE_URL}collections/makeup.jpg`,
   },
   {
     index: '05',
-    name: 'The Edit',
-    tagline: 'New in, and what everyone keeps asking for',
+    name: 'La Sélection',
+    tagline: 'Les nouveautés, et ce que tout le monde demande',
     description:
-      'A rotating spotlight that leads with PRODERMA and whatever just landed on the shelf, alongside the pieces our regulars keep coming back for.',
-    highlight: 'Updated weekly',
+      'Une mise en avant tournante qui commence par PRODERMA et tout ce qui vient d\u2019arriver en rayon, aux côtés des incontournables que nos habitué(e)s rachètent sans cesse.',
+    highlight: 'Mis à jour chaque semaine',
     image: null,
   },
 ]
 
 export const GALLERY = [
-  { id: 1, label: 'Gift box, ready to wrap', tag: 'Gift Sets', price: '2 400 DA', description: 'A curated gift box, wrapped and ready to give.' },
-  { id: 2, label: 'PRODERMA skincare edit', tag: 'Skincare', price: '3 200 DA', description: 'Our PRODERMA picks, chosen for real results.' },
-  { id: 3, label: 'Enzo styling tools in-store', tag: 'Haircare', price: '4 500 DA', description: 'Professional styling tools from Enzo, tested in-store.' },
-  { id: 4, label: 'Fragrance wall', tag: 'Parfumerie', price: '3 800 DA', description: 'Designer and niche fragrances, for her and for him.' },
-  { id: 5, label: 'Sense Laverne gift box', tag: 'Gift Sets', price: '2 900 DA', description: 'A luxury Sense Laverne set, wrapped while you wait.' },
-  { id: 6, label: 'New season makeup', tag: 'Makeup', price: '1 800 DA', description: 'This season\'s makeup arrivals, matched to real undertones.' },
-  { id: 7, label: 'Haircare & tools shelf', tag: 'Haircare', price: '2 100 DA', description: 'Everyday haircare to keep hair healthy between visits.' },
-  { id: 8, label: 'Sun care essentials', tag: 'Skincare', price: '1 500 DA', description: 'SPF and sun care essentials for every skin type.' },
+  { id: 1, label: 'Coffret cadeau, prêt à offrir', tag: 'Coffrets cadeaux', price: '2 400 DA', description: 'Un coffret cadeau composé avec soin, emballé et prêt à offrir.' },
+  { id: 2, label: 'Sélection soins PRODERMA', tag: 'Soins de la peau', price: '3 200 DA', description: 'Notre sélection PRODERMA, choisie pour des résultats concrets.' },
+  { id: 3, label: 'Outils de coiffage Enzo en boutique', tag: 'Cheveux', price: '4 500 DA', description: 'Des outils de coiffage professionnels signés Enzo, testés en boutique.' },
+  { id: 4, label: 'Mur à parfums', tag: 'Parfumerie', price: '3 800 DA', description: 'Parfums de créateurs et confidentiels, pour elle et pour lui.' },
+  { id: 5, label: 'Coffret cadeau Sense Laverne', tag: 'Coffrets cadeaux', price: '2 900 DA', description: 'Un coffret Sense Laverne haut de gamme, emballé pendant que vous patientez.' },
+  { id: 6, label: 'Maquillage nouvelle saison', tag: 'Maquillage', price: '1 800 DA', description: 'Les arrivages maquillage de la saison, adaptés aux vraies carnations.' },
+  { id: 7, label: 'Rayon cheveux & accessoires', tag: 'Cheveux', price: '2 100 DA', description: 'Des soins capillaires du quotidien pour des cheveux en forme entre deux visites.' },
+  { id: 8, label: 'Essentiels soins solaires', tag: 'Soins de la peau', price: '1 500 DA', description: 'SPF et soins solaires essentiels pour tous les types de peau.' },
 ]
 
 export const STORY = {
   eyebrow: 'Sidi Bel Abbès',
-  heading: 'A cosmetics boutique built on brands worth trusting.',
+  heading: 'Une boutique de cosmétiques construite sur des marques dignes de confiance.',
   paragraphs: [
-    `${SALON_NAME} brings together PRODERMA and a curated set of international skincare, haircare, fragrance and makeup brands under one roof in Sidi Bel Abbès — a shelf we'd shop ourselves, not just sell.`,
-    'We keep the range tight on purpose: every product on the shelf has been chosen, not just stocked, so a question about what actually works gets a straight answer instead of a sales pitch.',
+    `${SALON_NAME} réunit PRODERMA et une sélection de marques internationales de soins, cheveux, parfumerie et maquillage sous un même toit à Sidi Bel Abbès — un rayon que nous achèterions nous-mêmes, pas seulement que nous vendons.`,
+    'Nous gardons volontairement une gamme resserrée : chaque produit du rayon a été choisi, pas simplement stocké, pour qu\u2019une question sur ce qui marche vraiment obtienne une réponse honnête plutôt qu\u2019un argumentaire de vente.',
   ],
   stats: [
-    { value: '1,078+', label: 'Community on Instagram' },
-    { value: '20+', label: 'International brands' },
-    { value: '8', label: 'Years-in-progress story' },
+    { value: '1,078+', label: 'Communauté sur Instagram' },
+    { value: '20+', label: 'Marques internationales' },
+    { value: '8', label: 'Ans d\u2019histoire' },
   ],
 }
 
 export const TESTIMONIALS = [
   {
     quote:
-      'Finally a place in Sidi Bel Abbès that actually carries PRODERMA and knows the products, not just resells them.',
+      'Enfin un endroit à Sidi Bel Abbès qui propose vraiment PRODERMA et qui connaît les produits, pas juste qui les revend.',
     name: 'Amina K.',
-    service: 'Skincare',
+    service: 'Soins de la peau',
   },
   {
     quote:
-      'Bought my Enzo straightener here after they let me ask a hundred questions about it first. Zero regrets.',
+      'J\u2019ai acheté mon lisseur Enzo ici après qu\u2019on m\u2019ait laissé poser cent questions dessus. Aucun regret.',
     name: 'Yasmine R.',
-    service: 'Haircare & Styling',
+    service: 'Cheveux & Coiffage',
   },
   {
     quote:
-      'Got a Sense Laverne set wrapped in five minutes for a birthday gift. Looked like I\u2019d planned it for weeks.',
+      'Un coffret Sense Laverne emballé en cinq minutes pour un cadeau d\u2019anniversaire. On aurait dit que je l\u2019avais préparé depuis des semaines.',
     name: 'Sofiane B.',
-    service: 'Gift Sets',
+    service: 'Coffrets cadeaux',
   },
   {
     quote:
-      'The fragrance selection is genuinely different from every other parfumerie in town. Found my new signature scent here.',
+      'La sélection de parfums est vraiment différente de toutes les autres parfumeries de la ville. J\u2019y ai trouvé mon nouveau parfum signature.',
     name: 'Meriem T.',
     service: 'Parfumerie',
   },
 ]
 
 export const CONTACT = {
-  heading: 'Come find the shelf in person.',
-  sub: 'Message us on Instagram for stock questions, or stop by the boutique in Sidi Bel Abbès.',
+  heading: 'Venez découvrir le rayon en personne.',
+  sub: 'Écrivez-nous sur Instagram pour toute question de stock, ou passez à la boutique à Sidi Bel Abbès.',
   phone: '(XX) XX XX XX XX',
   email: 'hello@casabeaute22.example',
   address: 'Quartier Maqam El Chahid, à côté de l\u2019EHP Hasnaoui, Sidi Bel Abbès 22000',
@@ -144,7 +144,7 @@ export const CONTACT = {
   instagram: '@casabeaute22',
   instagramUrl: 'https://www.instagram.com/casabeaute22',
   hours: [
-    { day: 'Mon – Sat', time: '9:00 – 19:00' },
-    { day: 'Sunday', time: 'Closed' },
+    { day: 'Lun – Sam', time: '9:00 – 19:00' },
+    { day: 'Dimanche', time: 'Fermé' },
   ],
 }

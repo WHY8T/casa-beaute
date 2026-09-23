@@ -79,7 +79,7 @@ export default function Gallery({ onOpenStore }) {
   }, [])
 
   const whatsappLink = (product) => {
-    const message = `Hi! I'm interested in "${product.label}"${product.price ? ` (${product.price})` : ''}.`
+    const message = `Bonjour ! Je suis intéressé(e) par "${product.label}"${product.price ? ` (${product.price})` : ''}.`
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
   }
 
@@ -172,13 +172,13 @@ export default function Gallery({ onOpenStore }) {
           transition={{ duration: 0.6, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mt-4 font-sans text-ink/60"
         >
-          Just landed on the shelf.
+          Fraîchement arrivé en rayon.
         </motion.p>
       </div>
 
-      {loading && <p className="mt-14 text-center text-ink/40">Loading…</p>}
+      {loading && <p className="mt-14 text-center text-ink/40">Chargement…</p>}
       {!loading && featured.length === 0 && (
-        <p className="mt-14 text-center text-ink/40">No new arrivals yet — check back soon.</p>
+        <p className="mt-14 text-center text-ink/40">Aucune nouveauté pour le moment — revenez bientôt.</p>
       )}
 
       <div className="relative mt-14 -mx-6 sm:-mx-10 lg:-mx-16">
@@ -187,7 +187,7 @@ export default function Gallery({ onOpenStore }) {
 
         <button
           onClick={() => scrollRail(-1)}
-          aria-label="Scroll left"
+          aria-label="Défiler vers la gauche"
           className="absolute left-3 top-[38%] z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-cream text-ink shadow-md transition-colors hover:bg-rose-deep hover:text-cream sm:flex"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -196,7 +196,7 @@ export default function Gallery({ onOpenStore }) {
         </button>
         <button
           onClick={() => scrollRail(1)}
-          aria-label="Scroll right"
+          aria-label="Défiler vers la droite"
           className="absolute right-3 top-[38%] z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-cream text-ink shadow-md transition-colors hover:bg-rose-deep hover:text-cream sm:flex"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -238,7 +238,7 @@ export default function Gallery({ onOpenStore }) {
                       style={{ '--shine-delay': `${1 + i * 0.4}s` }}
                       className="badge-new absolute left-3 top-3 z-10 rounded-full bg-rose-deep px-3 py-1 font-sans text-[10px] font-medium uppercase tracking-wideish text-cream"
                     >
-                      New
+                      Nouveau
                     </motion.span>
                   )}
                   <ImagePlaceholder
@@ -256,7 +256,7 @@ export default function Gallery({ onOpenStore }) {
                     className={`mt-1 h-5 font-sans text-sm text-ink/60 transition-opacity duration-300 ${outOfStock ? '' : 'sm:opacity-0 sm:group-hover:opacity-100'
                       }`}
                   >
-                    {outOfStock ? <span className="text-ink/40">Sold out</span> : item.price}
+                    {outOfStock ? <span className="text-ink/40">Épuisé</span> : item.price}
                   </p>
                 </div>
               </motion.button>
@@ -271,7 +271,7 @@ export default function Gallery({ onOpenStore }) {
             onClick={onOpenStore}
             className="rounded-full border-2 border-rose-deep px-8 py-3 font-sans text-sm uppercase tracking-wideish text-rose-deep transition-all duration-300 hover:bg-rose-deep hover:text-cream hover:shadow-lg hover:shadow-rose-deep/20"
           >
-            View full store
+            Voir toute la boutique
           </button>
         </div>
       )}
@@ -286,7 +286,7 @@ export default function Gallery({ onOpenStore }) {
           >
             <button
               onClick={() => setSelected(null)}
-              aria-label="Close product"
+              aria-label="Fermer le produit"
               className="self-end m-6 flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-peach"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -318,7 +318,7 @@ export default function Gallery({ onOpenStore }) {
               <p className="mt-2 font-sans text-sm font-medium text-ink">{selected.price}</p>
 
               {selected.stock <= 0 ? (
-                <p className="mt-6 font-sans text-sm uppercase tracking-wideish text-ink/40">Currently sold out</p>
+                <p className="mt-6 font-sans text-sm uppercase tracking-wideish text-ink/40">Actuellement épuisé</p>
               ) : (
                 <>
                   <div className="mt-6 flex items-center justify-center gap-4">
@@ -344,7 +344,7 @@ export default function Gallery({ onOpenStore }) {
                     }}
                     className="mt-5 w-full rounded-full bg-ink py-3 font-sans text-sm text-cream transition-colors hover:bg-rose-deep"
                   >
-                    Add to cart
+                    Ajouter au panier
                   </button>
                   <a
                     href={whatsappLink(selected)}
@@ -352,7 +352,7 @@ export default function Gallery({ onOpenStore }) {
                     rel="noreferrer"
                     className="mt-3 inline-block font-sans text-xs uppercase tracking-wideish text-ink/50 underline decoration-ink/20 underline-offset-4 hover:text-ink"
                   >
-                    Ask on WhatsApp
+                    Demander sur WhatsApp
                   </a>
                 </>
               )}

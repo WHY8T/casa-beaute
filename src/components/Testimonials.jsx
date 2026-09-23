@@ -18,19 +18,19 @@ export default function Testimonials() {
   return (
     <section id="reviews" className="bg-peach px-6 py-28 sm:px-10 lg:px-16">
       <div className="mb-14 flex items-end justify-between">
-        <h2 className="font-display font-extrabold uppercase text-display-md text-ink">In their words</h2>
+        <h2 className="font-display font-extrabold uppercase text-display-md text-ink">Ce qu'ils en disent</h2>
         <div className="hidden gap-3 sm:flex">
           <button
             onClick={() => scrollToIndex(Math.max(0, active - 1))}
             className="h-11 w-11 rounded-full border border-ink/25 font-sans text-ink transition-colors hover:border-rose-deep hover:text-rose-deep"
-            aria-label="Previous testimonial"
+            aria-label="Avis précédent"
           >
             ←
           </button>
           <button
             onClick={() => scrollToIndex(Math.min(TESTIMONIALS.length - 1, active + 1))}
             className="h-11 w-11 rounded-full border border-ink/25 font-sans text-ink transition-colors hover:border-rose-deep hover:text-rose-deep"
-            aria-label="Next testimonial"
+            aria-label="Avis suivant"
           >
             →
           </button>

@@ -77,8 +77,8 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }) {
                         transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                         className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-xl"
                     >
-                        <h2 className="font-display text-xl font-extrabold uppercase text-ink">Checkout</h2>
-                        <p className="mt-1 text-sm text-ink/60">Pay when your order arrives — no card needed.</p>
+                        <h2 className="font-display text-xl font-extrabold uppercase text-ink">Commande</h2>
+                        <p className="mt-1 text-sm text-ink/60">Paiement à la livraison — aucune carte nécessaire.</p>
 
                         <div className="mt-5 rounded-xl bg-peach/50 p-4">
                             {items.map((i) => (
@@ -95,7 +95,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }) {
                             </div>
                         </div>
 
-                        <label className="mt-5 block text-xs uppercase tracking-wideish text-ink/50">Full name</label>
+                        <label className="mt-5 block text-xs uppercase tracking-wideish text-ink/50">Nom complet</label>
                         <input
                             required
                             value={name}
@@ -103,7 +103,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }) {
                             className="mt-1 w-full rounded-lg border border-ink/15 px-4 py-2.5 text-sm outline-none focus:border-rose-deep"
                         />
 
-                        <label className="mt-4 block text-xs uppercase tracking-wideish text-ink/50">Phone number</label>
+                        <label className="mt-4 block text-xs uppercase tracking-wideish text-ink/50">Numéro de téléphone</label>
                         <input
                             required
                             type="tel"
@@ -121,7 +121,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }) {
                             className="mt-1 w-full rounded-lg border border-ink/15 px-4 py-2.5 text-sm outline-none focus:border-rose-deep"
                         >
                             <option value="" disabled>
-                                Select your wilaya
+                                Choisissez votre wilaya
                             </option>
                             {WILAYAS.map((w) => (
                                 <option key={w} value={w}>
@@ -130,7 +130,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }) {
                             ))}
                         </select>
 
-                        <label className="mt-4 block text-xs uppercase tracking-wideish text-ink/50">Delivery address</label>
+                        <label className="mt-4 block text-xs uppercase tracking-wideish text-ink/50">Adresse de livraison</label>
                         <textarea
                             required
                             value={address}
@@ -139,7 +139,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }) {
                             className="mt-1 w-full rounded-lg border border-ink/15 px-4 py-2.5 text-sm outline-none focus:border-rose-deep"
                         />
 
-                        <label className="mt-4 block text-xs uppercase tracking-wideish text-ink/50">Notes (optional)</label>
+                        <label className="mt-4 block text-xs uppercase tracking-wideish text-ink/50">Remarques (facultatif)</label>
                         <textarea
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
@@ -155,14 +155,14 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }) {
                                 disabled={busy || items.length === 0}
                                 className="flex-1 rounded-full bg-ink py-3 text-sm text-cream transition-colors hover:bg-rose-deep disabled:opacity-50"
                             >
-                                {busy ? 'Placing order…' : 'Place order'}
+                                {busy ? 'Commande en cours…' : 'Passer la commande'}
                             </button>
                             <button
                                 type="button"
                                 onClick={onClose}
                                 className="rounded-full border border-ink/20 px-5 py-3 text-sm text-ink hover:bg-peach"
                             >
-                                Cancel
+                                Annuler
                             </button>
                         </div>
                     </motion.form>
