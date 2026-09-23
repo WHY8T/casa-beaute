@@ -28,7 +28,7 @@ export default function Nav() {
 
                 <a
                     href="#top"
-                    className="flex min-w-0 shrink items-center gap-2 md:absolute md:left-1/2 md:top-1/2 md:shrink-0 md:-translate-x-1/2 md:-translate-y-1/2"
+                    className="absolute left-1/2 top-1/2 flex max-w-[58vw] min-w-0 -translate-x-1/2 -translate-y-1/2 items-center gap-2 sm:max-w-none"
                 >
                     {LOGO_URL ? (
                         <img
@@ -46,7 +46,7 @@ export default function Nav() {
                     </span>
                 </a>
 
-                <div className="flex shrink-0 items-center gap-2 sm:gap-3 md:gap-6">
+                <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3 md:gap-6">
                     <a
                         href="#contact"
                         className="hidden font-sans text-xs uppercase tracking-wideish text-ink/70 transition-colors hover:text-rose-deep md:inline"
