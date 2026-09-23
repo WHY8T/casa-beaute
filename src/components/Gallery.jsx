@@ -225,7 +225,7 @@ export default function Gallery({ onOpenStore }) {
                 variants={card}
                 whileHover={{ y: -6 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-                className="group w-[64vw] flex-none snap-start text-left sm:w-[240px] lg:w-[280px]"
+                className="group w-[84vw] flex-none snap-start text-left sm:w-[260px] lg:w-[300px]"
                 onClick={() => setSelected(item)}
               >
                 <motion.div
