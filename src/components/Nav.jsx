@@ -13,37 +13,40 @@ export default function Nav() {
     return (
         <header className="fixed inset-x-0 top-0 z-50 bg-cream/85 backdrop-blur-md shadow-sm">
             <nav className="relative flex items-center justify-between px-4 py-4 sm:px-10 sm:py-5 lg:px-16">
-                <ul className="hidden items-center gap-8 md:flex">
-                    {NAV_LINKS.map((link) => (
-                        <li key={link.href}>
-                            <a
-                                href={link.href}
-                                className="font-sans text-xs uppercase tracking-wideish text-ink/70 transition-colors hover:text-rose-deep"
-                            >
-                                {link.label}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
+                <div className="flex items-center gap-6">
+                    <a href="#top" aria-label={SALON_NAME} className="flex shrink-0 items-center">
+                        {LOGO_URL ? (
+                            <img
+                                src={LOGO_URL}
+                                alt={SALON_NAME}
+                                className="h-7 w-7 object-contain sm:h-8 sm:w-8 md:h-9 md:w-9"
+                            />
+                        ) : (
+                            <span className="flex h-7 w-7 items-center justify-center rounded-full border border-rose-deep font-display text-xs font-extrabold text-rose-deep sm:h-8 sm:w-8 md:h-9 md:w-9">
+                                CB
+                            </span>
+                        )}
+                    </a>
+
+                    <ul className="hidden items-center gap-8 md:flex">
+                        {NAV_LINKS.map((link) => (
+                            <li key={link.href}>
+                                <a
+                                    href={link.href}
+                                    className="font-sans text-xs uppercase tracking-wideish text-ink/70 transition-colors hover:text-rose-deep"
+                                >
+                                    {link.label}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
 
                 <a
                     href="#top"
-                    className="absolute left-1/2 top-1/2 flex max-w-[58vw] min-w-0 -translate-x-1/2 -translate-y-1/2 items-center gap-2 sm:max-w-none"
+                    className="absolute left-1/2 top-1/2 max-w-[45vw] -translate-x-1/2 -translate-y-1/2 truncate font-display font-extrabold text-base uppercase tracking-wideish text-rose-deep sm:max-w-none sm:text-lg md:text-xl"
                 >
-                    {LOGO_URL ? (
-                        <img
-                            src={LOGO_URL}
-                            alt={SALON_NAME}
-                            className="h-7 w-7 shrink-0 object-contain sm:h-8 sm:w-8 md:h-9 md:w-9"
-                        />
-                    ) : (
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-rose-deep font-display text-xs font-extrabold text-rose-deep sm:h-8 sm:w-8 md:h-9 md:w-9">
-                            CB
-                        </span>
-                    )}
-                    <span className="truncate font-display font-extrabold text-base uppercase tracking-wideish text-rose-deep sm:text-lg md:text-xl">
-                        {SALON_NAME}
-                    </span>
+                    {SALON_NAME}
                 </a>
 
                 <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3 md:gap-6">
