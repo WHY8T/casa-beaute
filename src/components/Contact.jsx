@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { CONTACT, SERVICES } from '../lib/content'
+import { CONTACT } from '../lib/content'
+import useCategories from '../hooks/useCategories'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -9,6 +10,7 @@ const fadeUp = {
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false)
+  const { categories } = useCategories()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -104,9 +106,9 @@ export default function Contact() {
                   <option value="" disabled>
                     Que recherchez-vous ?
                   </option>
-                  {SERVICES.map((s) => (
-                    <option key={s.name} value={s.name}>
-                      {s.name}
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.name}>
+                      {c.name}
                     </option>
                   ))}
                 </select>

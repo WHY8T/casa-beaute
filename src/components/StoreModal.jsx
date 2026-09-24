@@ -2,13 +2,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ImagePlaceholder from './ImagePlaceholder'
 import useProducts from '../hooks/useProducts'
+import useCategories from '../hooks/useCategories'
 import { useCart } from '../context/CartContext'
 import { SALON_NAME, WHATSAPP_NUMBER } from '../lib/content'
 
-const CATEGORIES = ['Tous', 'Soins de la peau', 'Cheveux', 'Parfumerie', 'Maquillage', 'Coffrets cadeaux']
-
 export default function StoreModal({ isOpen, initialCategory, onClose }) {
     const { products, loading } = useProducts()
+    const { categories } = useCategories()
+    const CATEGORIES = useMemo(() => ['Tous', ...categories.map((c) => c.name)], [categories])
     const { addItem } = useCart()
     const [query, setQuery] = useState('')
     const [category, setCategory] = useState('Tous')

@@ -1,11 +1,31 @@
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import useProducts from '../hooks/useProducts'
+import useCategories from '../hooks/useCategories'
 
-const CATEGORIES = ['Soins de la peau', 'Cheveux', 'Parfumerie', 'Maquillage', 'Coffrets cadeaux']
 const ORDER_STATUSES = ['pending', 'confirmed', 'delivered', 'cancelled']
 const STATUS_LABELS = { pending: 'En attente', confirmed: 'Confirmée', delivered: 'Livrée', cancelled: 'Annulée' }
 const ORIGINAL_TITLE = 'Casa Beauté Admin'
+
+// Supabase Storage rejects keys with accents, spaces, or symbols
+// (e.g. "téléchargé (2).jpg" → 400 Invalid key), so strip those out.
+async function uploadImage(file) {
+    const extMatch = file.name.match(/\.[a-zA-Z0-9]+$/)
+    const ext = extMatch ? extMatch[0].toLowerCase() : ''
+    const baseName = file.name
+        .replace(ext, '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // strip accents (é → e)
+        .replace(/[^a-zA-Z0-9]+/g, '-') // spaces/parens/etc → dash
+        .replace(/^-+|-+$/g, '') // trim leading/trailing dashes
+        .toLowerCase()
+    const fileName = `${Date.now()}-${baseName || 'photo'}${ext}`
+    const { error: uploadError } = await supabase.storage.from('product-images').upload(fileName, file)
+    if (uploadError) throw uploadError
+
+    const { data: publicUrlData } = supabase.storage.from('product-images').getPublicUrl(fileName)
+    return publicUrlData.publicUrl
+}
 
 function playChime() {
     try {
@@ -193,6 +213,13 @@ function Dashboard() {
                         Produits
                     </button>
                     <button
+                        onClick={() => setTab('categories')}
+                        className={`rounded-full px-5 py-2 text-sm uppercase tracking-wideish ${tab === 'categories' ? 'bg-ink text-cream' : 'bg-white text-ink/60 hover:bg-peach'
+                            }`}
+                    >
+                        Catégories
+                    </button>
+                    <button
                         onClick={goToOrders}
                         className={`relative rounded-full px-5 py-2 text-sm uppercase tracking-wideish ${tab === 'orders' ? 'bg-ink text-cream' : 'bg-white text-ink/60 hover:bg-peach'
                             }`}
@@ -206,7 +233,9 @@ function Dashboard() {
                     </button>
                 </div>
 
-                {tab === 'products' ? <ProductsTab /> : <OrdersTab />}
+                {tab === 'products' && <ProductsTab />}
+                {tab === 'categories' && <CategoriesTab />}
+                {tab === 'orders' && <OrdersTab />}
             </div>
         </div>
     )
@@ -214,6 +243,8 @@ function Dashboard() {
 
 function ProductsTab() {
     const { products, loading } = useProducts()
+    const { categories } = useCategories()
+    const categoryOptions = categories.map((c) => c.name)
     const [editing, setEditing] = useState(null)
 
     async function handleDelete(id) {
@@ -233,12 +264,20 @@ function ProductsTab() {
         <div>
             <button
                 onClick={() => setEditing({})}
-                className="mt-8 rounded-full bg-rose-deep px-6 py-3 text-sm text-cream hover:bg-ink"
+                disabled={categoryOptions.length === 0}
+                className="mt-8 rounded-full bg-rose-deep px-6 py-3 text-sm text-cream hover:bg-ink disabled:cursor-not-allowed disabled:opacity-40"
             >
                 + Ajouter un produit
             </button>
+            {categoryOptions.length === 0 && (
+                <p className="mt-2 text-xs text-ink/50">
+                    Ajoutez d'abord une catégorie dans l'onglet « Catégories » pour pouvoir créer un produit.
+                </p>
+            )}
 
-            {editing && <ProductForm product={editing} onClose={() => setEditing(null)} />}
+            {editing && (
+                <ProductForm product={editing} categoryOptions={categoryOptions} onClose={() => setEditing(null)} />
+            )}
 
             <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {loading && <p className="text-ink/50">Chargement des produits…</p>}
@@ -305,10 +344,10 @@ function ProductsTab() {
     )
 }
 
-function ProductForm({ product, onClose }) {
+function ProductForm({ product, categoryOptions, onClose }) {
     const isEdit = Boolean(product.id)
     const [name, setName] = useState(product.label || '')
-    const [category, setCategory] = useState(product.tag || CATEGORIES[0])
+    const [category, setCategory] = useState(product.tag || categoryOptions[0] || '')
     const [price, setPrice] = useState(product.price || '')
     const [description, setDescription] = useState(product.description || '')
     const [stock, setStock] = useState(product.stock ?? 0)
@@ -323,31 +362,7 @@ function ProductForm({ product, onClose }) {
         setError('')
 
         try {
-            let imageUrl = product.image || null
-
-            if (file) {
-                // Supabase Storage rejects keys with accents, spaces, or symbols
-                // (e.g. "téléchargé (2).jpg" → 400 Invalid key), so strip those out.
-                const extMatch = file.name.match(/\.[a-zA-Z0-9]+$/)
-                const ext = extMatch ? extMatch[0].toLowerCase() : ''
-                const baseName = file.name
-                    .replace(ext, '')
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '') // strip accents (é → e)
-                    .replace(/[^a-zA-Z0-9]+/g, '-') // spaces/parens/etc → dash
-                    .replace(/^-+|-+$/g, '') // trim leading/trailing dashes
-                    .toLowerCase()
-                const fileName = `${Date.now()}-${baseName || 'photo'}${ext}`
-                const { error: uploadError } = await supabase.storage
-                    .from('product-images')
-                    .upload(fileName, file)
-                if (uploadError) throw uploadError
-
-                const { data: publicUrlData } = supabase.storage
-                    .from('product-images')
-                    .getPublicUrl(fileName)
-                imageUrl = publicUrlData.publicUrl
-            }
+            const imageUrl = file ? await uploadImage(file) : product.image || null
 
             const payload = {
                 name,
@@ -393,7 +408,7 @@ function ProductForm({ product, onClose }) {
                 onChange={(e) => setCategory(e.target.value)}
                 className="mt-1 w-full rounded-lg border border-ink/15 px-4 py-2.5 text-sm outline-none focus:border-rose-deep"
             >
-                {CATEGORIES.map((c) => (
+                {categoryOptions.map((c) => (
                     <option key={c} value={c}>
                         {c}
                     </option>
@@ -448,6 +463,165 @@ function ProductForm({ product, onClose }) {
                     </span>
                 </span>
             </label>
+
+            {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+
+            <div className="mt-6 flex gap-3">
+                <button
+                    type="submit"
+                    disabled={busy}
+                    className="rounded-full bg-ink px-6 py-2.5 text-sm text-cream hover:bg-rose-deep disabled:opacity-50"
+                >
+                    {busy ? 'Enregistrement…' : 'Enregistrer'}
+                </button>
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className="rounded-full border border-ink/20 px-6 py-2.5 text-sm text-ink hover:bg-peach"
+                >
+                    Annuler
+                </button>
+            </div>
+        </form>
+    )
+}
+
+function CategoriesTab() {
+    const { categories, loading } = useCategories()
+    const [editing, setEditing] = useState(null)
+
+    async function handleDelete(id) {
+        if (
+            !confirm(
+                'Supprimer cette catégorie ? Les produits qui l\'utilisaient garderont son ancien nom jusqu\'à ce que vous les modifiiez. Cette action est irréversible.'
+            )
+        )
+            return
+        await supabase.from('categories').delete().eq('id', id)
+    }
+
+    return (
+        <div>
+            <button
+                onClick={() => setEditing({})}
+                className="mt-8 rounded-full bg-rose-deep px-6 py-3 text-sm text-cream hover:bg-ink"
+            >
+                + Ajouter une catégorie
+            </button>
+            <p className="mt-2 text-xs text-ink/50">
+                Chaque catégorie créée ici apparaît automatiquement dans les collections de la page d'accueil, dans
+                le formulaire de contact, dans les filtres de la boutique, et comme option pour vos produits.
+            </p>
+
+            {editing && <CategoryForm category={editing} onClose={() => setEditing(null)} />}
+
+            <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {loading && <p className="text-ink/50">Chargement des catégories…</p>}
+                {!loading && categories.length === 0 && (
+                    <p className="text-ink/50">Aucune catégorie pour le moment — ajoutez la première ci-dessus.</p>
+                )}
+                {categories.map((c) => (
+                    <div key={c.id} className="rounded-2xl bg-white p-4 shadow-sm">
+                        <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-peach">
+                            {c.image && <img src={c.image} alt={c.name} className="h-full w-full object-cover" />}
+                        </div>
+                        <p className="mt-3 font-display font-bold text-ink">{c.name}</p>
+                        {c.description && <p className="mt-1 text-sm text-ink/60">{c.description}</p>}
+
+                        <div className="mt-3 flex gap-2">
+                            <button
+                                onClick={() => setEditing(c)}
+                                className="flex-1 rounded-full border border-ink/20 py-2 text-xs uppercase hover:bg-peach"
+                            >
+                                Modifier
+                            </button>
+                            <button
+                                onClick={() => handleDelete(c.id)}
+                                className="flex-1 rounded-full border border-red-300 py-2 text-xs uppercase text-red-600 hover:bg-red-50"
+                            >
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+function CategoryForm({ category, onClose }) {
+    const isEdit = Boolean(category.id)
+    const [name, setName] = useState(category.name || '')
+    const [description, setDescription] = useState(category.description || '')
+    const [file, setFile] = useState(null)
+    const [busy, setBusy] = useState(false)
+    const [error, setError] = useState('')
+
+    async function handleSubmit(e) {
+        e.preventDefault()
+        setBusy(true)
+        setError('')
+
+        try {
+            const imageUrl = file ? await uploadImage(file) : category.image || null
+
+            const payload = {
+                name,
+                description,
+                image_url: imageUrl,
+            }
+
+            if (isEdit) {
+                const { error: updateError } = await supabase.from('categories').update(payload).eq('id', category.id)
+                if (updateError) throw updateError
+            } else {
+                const { error: insertError } = await supabase.from('categories').insert(payload)
+                if (insertError) throw insertError
+            }
+
+            onClose()
+        } catch (err) {
+            setError(err.message)
+        } finally {
+            setBusy(false)
+        }
+    }
+
+    return (
+        <form onSubmit={handleSubmit} className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
+            <h2 className="font-display text-xl font-bold text-ink">
+                {isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie'}
+            </h2>
+
+            <label className="mt-4 block text-xs uppercase tracking-wideish text-ink/50">Nom</label>
+            <input
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="ex. Soins de la peau"
+                className="mt-1 w-full rounded-lg border border-ink/15 px-4 py-2.5 text-sm outline-none focus:border-rose-deep"
+            />
+
+            <label className="mt-4 block text-xs uppercase tracking-wideish text-ink/50">
+                Description courte (affichée sur la vignette de la collection)
+            </label>
+            <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={2}
+                placeholder="ex. Nettoyants, sérums & protection solaire"
+                className="mt-1 w-full rounded-lg border border-ink/15 px-4 py-2.5 text-sm outline-none focus:border-rose-deep"
+            />
+
+            <label className="mt-4 block text-xs uppercase tracking-wideish text-ink/50">
+                Photo {isEdit && '(laissez vide pour garder la photo actuelle)'}
+            </label>
+            <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFile(e.target.files[0])}
+                className="mt-1 w-full text-sm"
+            />
 
             {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
