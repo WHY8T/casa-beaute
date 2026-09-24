@@ -7,14 +7,41 @@ const fadeUp = {
 }
 
 export default function Story() {
+  const bgMedia = STORY.media?.[0]
+
   return (
-    <section id="story" className="bg-peach px-6 py-28 text-center sm:px-10 lg:px-16">
+    <section id="story" className="relative overflow-hidden bg-peach px-6 py-28 text-center sm:px-10 lg:px-16">
+      {bgMedia && (
+        <div className="absolute inset-0 z-0">
+          {bgMedia.video ? (
+            <video
+              className="h-full w-full scale-105 object-cover blur-sm"
+              src={bgMedia.video}
+              poster={bgMedia.poster}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+          ) : (
+            <img
+              className="h-full w-full scale-105 object-cover blur-sm"
+              src={bgMedia.poster}
+              alt=""
+            />
+          )}
+          {/* Peach wash over the blurred video so text stays legible */}
+          <div className="absolute inset-0 bg-peach/60" />
+        </div>
+      )}
+
       <motion.div
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.4 }}
         variants={fadeUp}
-        className="mx-auto max-w-3xl"
+        className="relative z-10 mx-auto max-w-3xl"
       >
         <p className="flex items-center justify-center gap-2 font-sans text-sm uppercase tracking-wideish text-ink/60">
           <span className="h-1.5 w-1.5 rounded-full bg-rose-deep" />
